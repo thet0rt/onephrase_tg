@@ -1,5 +1,5 @@
-from aiogram.types import InlineKeyboardMarkup, ReplyKeyboardMarkup
-from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder, InlineKeyboardButton
+from aiogram.types import InlineKeyboardMarkup
+from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardButton
 
 
 def get_main_kb() -> InlineKeyboardMarkup:
@@ -11,14 +11,3 @@ def get_main_kb() -> InlineKeyboardMarkup:
     kb.row(InlineKeyboardButton(text='Попросить нейросеть придумать фразу ✅', callback_data='neuro_phrase'))
 
     return kb.as_markup()
-
-#
-# def get_main_kb_2() -> ReplyKeyboardMarkup:
-#     kb = ReplyKeyboardBuilder()
-#     options = ['Общая информация', 'Проверить статус заказа', 'Случайный выбор худи',
-#                'Попросить нейросеть придумать фразу', 'Получить скидку', 'Посмотреть старые заказы',
-#                'Позвать менеджера']
-#     for text in options:
-#         kb.button(text=text, callback_data=text)
-#     kb.adjust(2)
-#     return kb.as_markup(resize_keyboard=True)

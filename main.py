@@ -2,16 +2,16 @@ import asyncio
 from aiogram import Bot, Dispatcher
 from dotenv import load_dotenv
 from os import getenv
-from handlers import check_orders, different_types
+from handlers import menu, different_types, order_status
 
 
 # Запуск бота
 async def main():
-    load_dotenv('.env')
-    token = getenv('BOT_TOKEN')
+    load_dotenv(".env")
+    token = getenv("BOT_TOKEN")
     bot = Bot(token=token)
     dp = Dispatcher()
-    dp.include_routers(check_orders.router, different_types.router)
+    dp.include_routers(menu.router, different_types.router, order_status.router)
 
     # Запускаем бота и пропускаем все накопленные входящие
     # Да, этот метод можно вызвать даже если у вас поллинг
