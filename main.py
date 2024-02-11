@@ -1,13 +1,16 @@
+from dotenv import load_dotenv
+
+load_dotenv(".env")
+
+from os import getenv, environ
 import asyncio
 from aiogram import Bot, Dispatcher
-from dotenv import load_dotenv
-from os import getenv
+
 from handlers import menu, different_types, order_status
 
 
 # Запуск бота
 async def main():
-    load_dotenv(".env")
     token = getenv("BOT_TOKEN")
     bot = Bot(token=token)
     dp = Dispatcher()
