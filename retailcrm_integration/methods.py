@@ -1,12 +1,13 @@
 from os import getenv
 from .helpers import get_status_filters
 import aiohttp
+from typing import Optional
 
 SUBDOMAIN = getenv("SUB_DOMAIN")
 TOKEN = getenv("RETAIL_CRM_TOKEN")
 
 
-async def get_orders_by_number(phone: str) -> dict:
+async def get_orders_by_number(phone: str) -> Optional[list]:
     url = f"https://{SUBDOMAIN}.retailcrm.ru/api/v5/orders?filter[customer]={phone}{get_status_filters()}"
 
     headers = {"X-API-KEY": TOKEN}
