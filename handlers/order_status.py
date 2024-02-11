@@ -1,7 +1,7 @@
 from aiogram import Router, F
 from aiogram.types import Message, ReplyKeyboardRemove, CallbackQuery
-from retailcrm_integration.methods import get_orders_by_number
-from retailcrm_integration.helpers import process_order_data
+from integration.retailcrm_methods import get_orders_by_number
+from integration.helpers import process_order_data
 
 from keyboards.for_order_status import get_authorize_kb, get_no_orders_kb
 

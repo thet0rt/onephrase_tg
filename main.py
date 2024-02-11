@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 
 load_dotenv(".env")
 
-from os import getenv, environ
+from os import getenv
 import asyncio
 from aiogram import Bot, Dispatcher
 

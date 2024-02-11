@@ -39,7 +39,9 @@ def process_order_data(order_data: list) -> list[str]:
         number = order.get('number')
         status = order.get('status')
         items = order.get('items')
-        start = f'Заказ №{number}'
+        order_number_msg = f'Заказ №{number}'
+        status_msg = config.get('status', {}).get('status_msg')
+        delivery_status_msg = get_delivery_status_msg(order)
         ''
 
 
@@ -50,3 +52,8 @@ def get_item_list(items: list) -> str:
         quantity = item.get('quantity')
         items_description += f'\n{count}. {name} - {quantity} шт.'
     return items_description
+
+
+def get_delivery_status_msg(order: dict) -> str:
+    if order.get('delivery', {}).get('integration_code') == 'sdek-v-2':
+        return
