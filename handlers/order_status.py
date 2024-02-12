@@ -17,7 +17,7 @@ async def order_status(callback_query: CallbackQuery):
 
 @router.message(F.content_type.in_({"contact"}))
 async def authorize(message: Message):
-    phone_number = '79081652716' or message.contact.phone_number  # todo delete phone number later
+    phone_number = '79087530154' or message.contact.phone_number  # todo delete phone number later
     orders = await get_orders_by_number(phone_number)
     print(orders)
     if not orders:

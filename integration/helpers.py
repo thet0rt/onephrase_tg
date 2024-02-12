@@ -1,3 +1,5 @@
+from datetime import datetime as dt
+from datetime import timedelta
 def get_status_filters() -> str:
     filters = ''
     for status_code in get_message_mapping_config(codes_only=True):
@@ -40,9 +42,12 @@ def process_order_data(order_data: list) -> list[str]:
         status = order.get('status')
         items = order.get('items')
         order_number_msg = f'Заказ №{number}'
-        status_msg = config.get('status', {}).get('status_msg')
-        delivery_status_msg = get_delivery_status_msg(order)
-        ''
+        item_msg = get_item_list(items)
+        status_msg = config.get(status, {}).get('status_msg')
+        delivery_status_msg = get_delivery_status_msg(order, status, config)
+        message = f'{order_number_msg}\n{status_msg}\n{item_msg}\n\n{delivery_status_msg}'
+        info_list.append(message)
+    return info_list
 
 
 def get_item_list(items: list) -> str:
@@ -54,6 +59,13 @@ def get_item_list(items: list) -> str:
     return items_description
 
 
-def get_delivery_status_msg(order: dict) -> str:
-    if order.get('delivery', {}).get('integration_code') == 'sdek-v-2':
-        return
+def get_delivery_status_msg(order: dict, status, config) -> str:
+    # if order.get('delivery', {}).get('integration_code') == 'sdek-v-2':
+    #     return
+    if status in ['assembling', 'fail-gotov', 'assembling-complete', 'emb', 'v-rabote', 'pack-no-track-number',
+                  'pack', 'ready']:
+        sending_date_1 = dt.now() + timedelta(days=config.get(status).get('days_count')[0])
+        sending_date_2 = dt.now() + timedelta(days=config.get(status).get('days_count')[1])
+        sending_date_1 = sending_date_1.strftime('%d.%m.%Y')
+        sending_date_2 = sending_date_2.strftime('%d.%m.%Y')
+        return f'Ориентировочная дата отправки {sending_date_1} - {sending_date_2}'
