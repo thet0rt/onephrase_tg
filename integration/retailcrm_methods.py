@@ -14,12 +14,14 @@ async def get_orders_by_number(phone: str) -> Optional[list]:
 
     async with aiohttp.ClientSession() as session:
         try:
-            async with session.get(url, headers=headers, raise_for_status=True) as response:
+            async with session.get(
+                url, headers=headers, raise_for_status=True
+            ) as response:
                 response = await response.json()
-                if not response.get('success') or not response.get('orders'):
+                if not response.get("success") or not response.get("orders"):
                     return
                 print(response)
-                print(response.get('orders'))  # todo delete
-                return response.get('orders')
+                print(response.get("orders"))  # todo delete
+                return response.get("orders")
         except Exception as e:
             return  # todo logging

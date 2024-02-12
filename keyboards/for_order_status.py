@@ -1,4 +1,8 @@
-from aiogram.types import InlineKeyboardButton, ReplyKeyboardMarkup, InlineKeyboardMarkup
+from aiogram.types import (
+    InlineKeyboardButton,
+    ReplyKeyboardMarkup,
+    InlineKeyboardMarkup,
+)
 from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 
 
@@ -12,9 +16,7 @@ def get_authorize_kb() -> ReplyKeyboardMarkup:
 def get_no_orders_kb() -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     kb.row(
-        InlineKeyboardButton(
-            text="Позвать менеджера", callback_data="ask_for_manager"
-        )
+        InlineKeyboardButton(text="Позвать менеджера", callback_data="ask_for_manager")
     )
     kb.row(
         InlineKeyboardButton(
