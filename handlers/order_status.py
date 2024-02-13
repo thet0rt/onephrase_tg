@@ -18,7 +18,7 @@ async def order_status(callback_query: CallbackQuery):
 @router.message(F.content_type.in_({"contact"}))
 async def authorize(message: Message):
     phone_number = (
-        "79150798782" or message.contact.phone_number
+        "79055333334" or message.contact.phone_number
     )  # todo delete phone number later
     orders = await get_orders_by_number(phone_number)
     print(orders)
@@ -27,6 +27,6 @@ async def authorize(message: Message):
             text="Мы не нашли актуальных заказов.", reply_markup=get_no_orders_kb()
         )
     else:
-        orders_info = process_order_data(orders)
+        orders_info = await process_order_data(orders)
         for order_info in orders_info:
             await message.answer(text=order_info, reply_markup=ReplyKeyboardRemove())

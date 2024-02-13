@@ -56,10 +56,11 @@ async def get_cdek_order_info(cdek_uuid) -> Optional[dict]:
 async def get_cdek_status(cdek_uuid) -> dict:
     cdek_status = {"status": None, "planned_date": None}
     order_info = await get_cdek_order_info(cdek_uuid)
-    status_list = order_info.get("statuses")
+    print(order_info)
+    status_list = order_info.get("entity", {}).get("statuses")  # todo проверить если несколько packages
     if status_list:
         cdek_status.update(status=status_list[0].get("name"))
-    cdek_status.update(planned_date=order_info.get("planned_delivery_date"))
+    cdek_status.update(planned_date=order_info.get("entity", {}).get("planned_delivery_date"))
     return cdek_status
 
 

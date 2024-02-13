@@ -1,5 +1,7 @@
 from datetime import datetime as dt
 from datetime import timedelta
+from typing import Optional
+
 from .cdek_methods import get_cdek_status
 
 
@@ -8,6 +10,30 @@ def get_status_filters() -> str:
     for status_code in get_message_mapping_config(codes_only=True):
         filters += f"&filter[extendedStatus][]={status_code}"
     return filters
+
+
+async def get_cdek_msg(order: dict) -> Optional[str]:
+    cdek_uuid = order.get("delivery", {}).get("data", {}).get("externalId")
+    cdek_status = await get_cdek_status(cdek_uuid)
+    delivery_status = cdek_status.get('status')
+    planned_date = cdek_status.get('planned_date')
+    if not delivery_status or not planned_date:
+        print(f'Something is wrong with cdek_status={cdek_status}')  # todo change to logging
+        return
+    delivery_msg = f"\nСтатус доставки: {delivery_status}\nОриентировочная дата прибытия: {planned_date}"
+    return delivery_msg
+
+
+async def get_dispatch_msg(config: dict, status: str) -> str:
+    sending_date_1 = dt.now() + timedelta(
+        days=config.get(status).get("days_count")[0]
+    )
+    sending_date_2 = dt.now() + timedelta(
+        days=config.get(status).get("days_count")[1]
+    )
+    sending_date_1 = sending_date_1.strftime("%d.%m.%Y")
+    sending_date_2 = sending_date_2.strftime("%d.%m.%Y")
+    return f"Ориентировочная дата отправки {sending_date_1} - {sending_date_2}"
 
 
 def get_message_mapping_config(
@@ -59,18 +85,18 @@ def get_message_mapping_config(
             "status_msg": "Заказ передан курьеру и скоро начнет движение к вам",
             "days_count": (1, 2),
         },
-        "sent-to-delivery": {"status_msg": "", "days_count": 0},  # todo later
-        "delivering": {"status_msg": "", "days_count": 0},
-        "redirect": {"status_msg": "", "days_count": 0},
-        "ready-for-self-pickup": {"status_msg": "", "days_count": 0},
-        "arrived-in-pickup-point": {"status_msg": "", "days_count": 0},
-        "vozvrat-otpravleniia": {"status_msg": "", "days_count": 0},
-        "complete": {"status_msg": "", "days_count": 0},
+        "sent-to-delivery": {"status_msg": "Заказ готов и передан в доставку", "days_count": 0},  # todo later
+        "delivering": {"status_msg": "Заказ готов и передан в доставку", "days_count": 0},
+        "redirect": {"status_msg": "Заказ готов и передан в доставку", "days_count": 0},
+        "ready-for-self-pickup": {"status_msg": "Заказ готов и передан в доставку", "days_count": 0},
+        "arrived-in-pickup-point": {"status_msg": "Заказ готов и передан в доставку", "days_count": 0},
+        "vozvrat-otpravleniia": {"status_msg": "Заказ готов и передан в доставку", "days_count": 0},
+        "complete": {"status_msg": "Заказ готов и передан в доставку", "days_count": 0},
     }
     return config.keys() if codes_only else config
 
 
-def process_order_data(order_data: list) -> list[str]:
+async def process_order_data(order_data: list) -> list[str]:
     info_list = []
     config = get_message_mapping_config()
     for order in order_data:
@@ -80,7 +106,7 @@ def process_order_data(order_data: list) -> list[str]:
         order_number_msg = f"Заказ №{number}"
         item_msg = get_item_list(items)
         status_msg = config.get(status, {}).get("status_msg")
-        delivery_status_msg = get_delivery_status_msg(order, status, config)
+        delivery_status_msg = await get_delivery_status_msg(order, status, config)
         message = (
             f"{order_number_msg}\n{status_msg}\n{item_msg}\n\n{delivery_status_msg}"
         )
@@ -97,9 +123,7 @@ def get_item_list(items: list) -> str:
     return items_description
 
 
-def get_delivery_status_msg(order: dict, status, config) -> str:
-    # if order.get('delivery', {}).get('integration_code') == 'sdek-v-2':
-    #     return
+async def get_delivery_status_msg(order: dict, status, config) -> str:
     if status in [
         "assembling",
         "fail-gotov",
@@ -110,15 +134,7 @@ def get_delivery_status_msg(order: dict, status, config) -> str:
         "pack",
         "ready",
     ]:
-        sending_date_1 = dt.now() + timedelta(
-            days=config.get(status).get("days_count")[0]
-        )
-        sending_date_2 = dt.now() + timedelta(
-            days=config.get(status).get("days_count")[1]
-        )
-        sending_date_1 = sending_date_1.strftime("%d.%m.%Y")
-        sending_date_2 = sending_date_2.strftime("%d.%m.%Y")
-        return f"Ориентировочная дата отправки {sending_date_1} - {sending_date_2}"
+        return await get_dispatch_msg(config, status)
     if status in [
         "send-to-delivery",
         "delivering",
@@ -128,6 +144,5 @@ def get_delivery_status_msg(order: dict, status, config) -> str:
         "vozvrat-otpravleniia",
     ]:
         if order.get("delivery", {}).get("code") == "sdek-v-2":
-            cdek_uuid = order.get("delivery", {}).get("data", {}).get("externalId")
-            cdek_status = get_cdek_status(cdek_uuid)
-            delivery_msg = f""
+            delivery_msg = await get_cdek_msg(order)
+            return delivery_msg
