@@ -9,8 +9,10 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 def get_authorize_kb() -> ReplyKeyboardMarkup:
     kb = ReplyKeyboardBuilder()
     kb.button(text="Авторизоваться", request_contact=True)
-
-    return kb.as_markup()
+    kb = kb.as_markup()
+    kb.one_time_keyboard = True
+    kb.resize_keyboard = True
+    return kb
 
 
 def get_no_orders_kb() -> InlineKeyboardMarkup:

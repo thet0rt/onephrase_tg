@@ -1,6 +1,7 @@
 import json
 from datetime import timedelta
 from os import getenv
+from typing import Optional
 
 from redis import asyncio as aioredis
 
@@ -13,10 +14,10 @@ async def get_from(key: str) -> str | None:
     return val
 
 
-async def set_to(key: str, val: str, ex: int) -> bool:
-    res = await redis_client.setex(
-        key,
-        timedelta(seconds=ex),
+async def set_to(key: str, val: str, ex: Optional[int]) -> bool:
+    res = await redis_client.set(
+        name=key,
+        ex=timedelta(seconds=ex),
         value=json.dumps(val),
     )
     return res
