@@ -5,10 +5,14 @@ from typing import Optional
 from .cdek_methods import get_cdek_status
 
 
-def get_status_filters() -> str:
+def get_status_filters(actuality: str) -> str:
     filters = ""
-    for status_code in get_message_mapping_config(codes_only=True):
-        filters += f"&filter[extendedStatus][]={status_code}"
+    if actuality == 'new':
+        for status_code in get_message_mapping_config(codes_only=True):
+            filters += f"&filter[extendedStatus][]={status_code}"
+    elif actuality == 'old':
+        filters += f"&filter[extendedStatus][]=complete"
+    print(filters)
     return filters
 
 
@@ -90,8 +94,7 @@ def get_message_mapping_config(
         "redirect": {"status_msg": "Заказ готов и передан в доставку", "days_count": 0},
         "ready-for-self-pickup": {"status_msg": "Заказ готов и передан в доставку", "days_count": 0},
         "arrived-in-pickup-point": {"status_msg": "Заказ готов и передан в доставку", "days_count": 0},
-        "vozvrat-otpravleniia": {"status_msg": "Заказ готов и передан в доставку", "days_count": 0},
-        "complete": {"status_msg": "Заказ готов и передан в доставку", "days_count": 0},
+        "vozvrat-otpravleniia": {"status_msg": "Заказ готов и передан в доставку", "days_count": 0}
     }
     return config.keys() if codes_only else config
 
