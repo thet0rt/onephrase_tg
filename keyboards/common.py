@@ -10,20 +10,14 @@ def get_main_kb() -> InlineKeyboardMarkup:
             text="Проверить статус заказа", callback_data="order_status"
         )
     )
-    kb.row(
-        InlineKeyboardButton(
-            text="Получить скидку", callback_data="sale"
-        )
-    )
+    kb.row(InlineKeyboardButton(text="Получить скидку", callback_data="sale"))
     kb.row(
         InlineKeyboardButton(
             text="Проверить историю заказов", callback_data="check_order_history"
         )
     )
     kb.row(
-        InlineKeyboardButton(
-            text="Позвать менеджера", callback_data="ask_for_manager"
-        )
+        InlineKeyboardButton(text="Позвать менеджера", callback_data="ask_for_manager")
     )
 
     return kb.as_markup()

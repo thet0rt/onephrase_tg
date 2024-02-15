@@ -22,5 +22,7 @@ async def cmd_start(message: Message):
 @router.callback_query(F.data == "back_to_menu")
 async def order_status(callback_query: CallbackQuery):
     logo = FSInputFile("media/logo.png")
-    await callback_query.answer(' ')
-    await callback_query.message.answer_photo(photo=logo, caption="Твой текст", reply_markup=get_main_kb())
+    await callback_query.answer(" ")
+    await callback_query.message.answer_photo(
+        photo=logo, caption="Твой текст", reply_markup=get_main_kb()
+    )

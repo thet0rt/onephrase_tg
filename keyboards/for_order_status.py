@@ -17,9 +17,7 @@ def get_authorize_kb() -> ReplyKeyboardMarkup:
 
 def get_no_orders_kb() -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
-    kb.row(
-        InlineKeyboardButton(text="Оформить новый заказ", callback_data="new_order")
-    )
+    kb.row(InlineKeyboardButton(text="Оформить новый заказ", callback_data="new_order"))
     kb.row(
         InlineKeyboardButton(text="Позвать менеджера", callback_data="ask_for_manager")
     )
@@ -28,22 +26,22 @@ def get_no_orders_kb() -> InlineKeyboardMarkup:
             text="Проверить историю заказов", callback_data="check_order_history"
         )
     )
-    kb.row(
-        InlineKeyboardButton(
-            text="На главную", callback_data="back_to_menu"
-        )
-    )
+    kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
     return kb.as_markup()
 
 
 def get_subscribe_kb() -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     kb.row(
-        InlineKeyboardButton(text="Подписаться", url='https://t.me/justonephrase', callback_data="-")
+        InlineKeyboardButton(
+            text="Подписаться", url="https://t.me/justonephrase", callback_data="-"
+        )
     )
 
     kb.row(
-        InlineKeyboardButton(text="Проверить подписку и получить скидку", callback_data="sale")
+        InlineKeyboardButton(
+            text="Проверить подписку и получить скидку", callback_data="sale"
+        )
     )
 
     return kb.as_markup()
@@ -52,14 +50,12 @@ def get_subscribe_kb() -> InlineKeyboardMarkup:
 def get_subscribe_success_kb() -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     kb.row(
-        InlineKeyboardButton(text="Перейти на сайт", url='https://onephrase.ru', callback_data="-")  # todo посмотреть что тут можно сделать
+        InlineKeyboardButton(
+            text="Перейти на сайт", url="https://onephrase.ru", callback_data="-"
+        )  # todo посмотреть что тут можно сделать
     )
-    kb.row(
-        InlineKeyboardButton(text="Оформить заказ здесь", callback_data="new_order")
-    )
-    kb.row(
-        InlineKeyboardButton(text="На главную", callback_data="back_to_menu")
-    )
+    kb.row(InlineKeyboardButton(text="Оформить заказ здесь", callback_data="new_order"))
+    kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
 
     return kb.as_markup()
 
@@ -67,13 +63,11 @@ def get_subscribe_success_kb() -> InlineKeyboardMarkup:
 def get_after_order_status_kb() -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     kb.row(
-        InlineKeyboardButton(text="Перейти на сайт", url='https://onephrase.ru', callback_data="-")  # todo посмотреть что тут можно сделать
+        InlineKeyboardButton(
+            text="Перейти на сайт", url="https://onephrase.ru", callback_data="-"
+        )  # todo посмотреть что тут можно сделать
     )
-    kb.row(
-        InlineKeyboardButton(text="Оформить новый заказ", callback_data="new_order")
-    )
-    kb.row(
-        InlineKeyboardButton(text="На главную", callback_data="back_to_menu")
-    )
+    kb.row(InlineKeyboardButton(text="Оформить новый заказ", callback_data="new_order"))
+    kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
 
     return kb.as_markup()

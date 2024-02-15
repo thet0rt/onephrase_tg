@@ -28,8 +28,8 @@ async def get_cdek_token():
                 raise_for_status=True,
             ) as response:
                 response = await response.json()
-                access_token = response.get('access_token')
-                await set_to('cdek_token', access_token, 3500)
+                access_token = response.get("access_token")
+                await set_to("cdek_token", access_token, 3500)
                 return response.get("access_token")
         except Exception as e:
             print(e)
@@ -37,7 +37,7 @@ async def get_cdek_token():
 
 
 async def get_cdek_order_info(cdek_uuid) -> Optional[dict]:
-    cdek_token = await get_from('cdek_token') or await get_cdek_token()
+    cdek_token = await get_from("cdek_token") or await get_cdek_token()
     url = f"https://api.cdek.ru/v2/orders/{cdek_uuid}"
     headers = {
         "accept": "application/json",
@@ -60,10 +60,14 @@ async def get_cdek_status(cdek_uuid) -> dict:
     cdek_status = {"status": None, "planned_date": None}
     order_info = await get_cdek_order_info(cdek_uuid)
     print(order_info)
-    status_list = order_info.get("entity", {}).get("statuses")  # todo проверить если несколько packages
+    status_list = order_info.get("entity", {}).get(
+        "statuses"
+    )  # todo проверить если несколько packages
     if status_list:
         cdek_status.update(status=status_list[0].get("name"))
-    cdek_status.update(planned_date=order_info.get("entity", {}).get("planned_delivery_date"))
+    cdek_status.update(
+        planned_date=order_info.get("entity", {}).get("planned_delivery_date")
+    )
     return cdek_status
 
 
