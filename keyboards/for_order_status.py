@@ -51,7 +51,7 @@ def get_subscribe_success_kb() -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     kb.row(
         InlineKeyboardButton(
-            text="Перейти на сайт", url="https://onephrase.ru", callback_data="-"
+            text="Перейти на сайт", url="https://onephrase.ru/?utm_source=tg&utm_medium=tg_bot", callback_data="-"
         )  # todo посмотреть что тут можно сделать
     )
     kb.row(InlineKeyboardButton(text="Оформить заказ здесь", callback_data="new_order"))
@@ -64,7 +64,7 @@ def get_after_order_status_kb() -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     kb.row(
         InlineKeyboardButton(
-            text="Перейти на сайт", url="https://onephrase.ru", callback_data="-"
+            text="Перейти на сайт", url="https://onephrase.ru/?utm_source=tg&utm_medium=tg_bot", callback_data="-"
         )  # todo посмотреть что тут можно сделать
     )
     kb.row(InlineKeyboardButton(text="Оформить новый заказ", callback_data="new_order"))
