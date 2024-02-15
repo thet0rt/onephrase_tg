@@ -4,6 +4,7 @@ from typing import Optional
 import aiohttp
 import asyncio
 from dotenv import load_dotenv
+from db import get_from, set_to
 
 load_dotenv("../.env")  # todo delete later
 
@@ -27,6 +28,9 @@ async def get_cdek_token():
                 raise_for_status=True,
             ) as response:
                 response = await response.json()
+                response.raise_for_status()  # todo проверить это
+                access_token = response.get('access_token')
+                await set_to('cdek_token', access_token, 3500)
                 return response.get("access_token")
         except Exception as e:
             print(e)
@@ -34,7 +38,7 @@ async def get_cdek_token():
 
 
 async def get_cdek_order_info(cdek_uuid) -> Optional[dict]:
-    cdek_token = await get_cdek_token()  # todo change to redis
+    cdek_token = await get_from('cdek_token') or await get_cdek_token()
     url = f"https://api.cdek.ru/v2/orders/{cdek_uuid}"
     headers = {
         "accept": "application/json",
@@ -47,6 +51,7 @@ async def get_cdek_order_info(cdek_uuid) -> Optional[dict]:
                 url, headers=headers, raise_for_status=True
             ) as response:
                 response = await response.json()
+                response.raise_for_status()
                 return response
         except Exception as e:
             print(e)

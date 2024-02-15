@@ -1,6 +1,6 @@
 from typing import Optional
 
-from aiogram import Router, F
+from aiogram import Router, F, Bot
 from aiogram.types import Message, ReplyKeyboardRemove, CallbackQuery
 from integration.retailcrm_methods import get_orders_by_number
 from integration.helpers import process_order_data
@@ -8,7 +8,7 @@ from db import set_to, get_from
 from aiogram.fsm.context import FSMContext
 from utils.states import CurrentLogic
 
-from keyboards.for_order_status import get_authorize_kb, get_no_orders_kb
+from keyboards.for_order_status import get_authorize_kb, get_no_orders_kb, get_subscribe_kb
 
 router = Router()  # [1]
 
@@ -35,6 +35,17 @@ async def order_status(callback_query: CallbackQuery, state: FSMContext):
         await callback_query.answer(
             text="Проверяем авторизацию", reply_markup=get_authorize_kb()
         )
+
+
+@router.callback_query(F.data == 'sale')
+async def get_sale(callback_query: CallbackQuery, state: FSMContext, bot: Bot):
+    subscription_status = await bot.get_chat_member(chat_id=-1001613641192, user_id=callback_query.from_user.id)
+    await callback_query.answer('Проверяем подписку...')
+    if subscription_status.status != 'left':
+        await callback_query.message.answer('Спасибо за подписку! Промокод на скидку 12% - TGSUB')  # todo later smth else here
+    else:
+        await callback_query.message.answer('Чтобы получать бонусы нужно быть подписанным'
+                                            ' на наш канал @justonephrase', reply_markup=get_subscribe_kb())
 
 
 @router.message(F.content_type.in_({"contact"}))

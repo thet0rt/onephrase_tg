@@ -34,3 +34,16 @@ def get_no_orders_kb() -> InlineKeyboardMarkup:
         )
     )
     return kb.as_markup()
+
+
+def get_subscribe_kb() -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
+    kb.row(
+        InlineKeyboardButton(text="Подписаться", url='https://t.me/justonephrase', callback_data="-")
+    )
+
+    kb.row(
+        InlineKeyboardButton(text="Проверить подписку и получить скидку", callback_data="sale")
+    )
+
+    return kb.as_markup()

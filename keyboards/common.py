@@ -12,7 +12,7 @@ def get_main_kb() -> InlineKeyboardMarkup:
     )
     kb.row(
         InlineKeyboardButton(
-            text="Получить скидку", callback_data="random_choice"
+            text="Получить скидку", callback_data="sale"
         )
     )
     kb.row(
