@@ -28,7 +28,6 @@ async def get_cdek_token():
                 raise_for_status=True,
             ) as response:
                 response = await response.json()
-                response.raise_for_status()  # todo проверить это
                 access_token = response.get('access_token')
                 await set_to('cdek_token', access_token, 3500)
                 return response.get("access_token")
@@ -51,7 +50,6 @@ async def get_cdek_order_info(cdek_uuid) -> Optional[dict]:
                 url, headers=headers, raise_for_status=True
             ) as response:
                 response = await response.json()
-                response.raise_for_status()
                 return response
         except Exception as e:
             print(e)

@@ -8,7 +8,8 @@ from db import set_to, get_from
 from aiogram.fsm.context import FSMContext
 from utils.states import CurrentLogic
 
-from keyboards.for_order_status import get_authorize_kb, get_no_orders_kb, get_subscribe_kb
+from keyboards.for_order_status import (get_authorize_kb, get_no_orders_kb, get_subscribe_kb,
+                                        get_subscribe_success_kb, get_after_order_status_kb)
 
 router = Router()  # [1]
 
@@ -39,10 +40,11 @@ async def order_status(callback_query: CallbackQuery, state: FSMContext):
 
 @router.callback_query(F.data == 'sale')
 async def get_sale(callback_query: CallbackQuery, state: FSMContext, bot: Bot):
-    subscription_status = await bot.get_chat_member(chat_id=-1001613641192, user_id=callback_query.from_user.id)
     await callback_query.answer('Проверяем подписку...')
+    subscription_status = await bot.get_chat_member(chat_id=-1001613641192, user_id=callback_query.from_user.id)
     if subscription_status.status != 'left':
-        await callback_query.message.answer('Спасибо за подписку! Промокод на скидку 12% - TGSUB')  # todo later smth else here
+        await callback_query.message.answer('Спасибо за подписку! Промокод на скидку 12% - TGSUB',
+                                            reply_markup=get_subscribe_success_kb())
     else:
         await callback_query.message.answer('Чтобы получать бонусы нужно быть подписанным'
                                             ' на наш канал @justonephrase', reply_markup=get_subscribe_kb())
@@ -78,6 +80,8 @@ async def show_actual_orders_query(callback_query: CallbackQuery, phone_number: 
         orders_info = await process_order_data(orders)
         for order_info in orders_info:
             await callback_query.message.answer(text=order_info, reply_markup=ReplyKeyboardRemove())
+        await callback_query.message.answer(text='Вот всё, что мне удалось найти',
+                                            reply_markup=get_after_order_status_kb())
 
 
 async def show_actual_orders_msg(message: Message, phone_number: str):
@@ -91,6 +95,7 @@ async def show_actual_orders_msg(message: Message, phone_number: str):
         orders_info = await process_order_data(orders)
         for order_info in orders_info:
             await message.answer(text=order_info, reply_markup=ReplyKeyboardRemove())
+        await message.answer(text='Вот всё, что мне удалось найти', reply_markup=get_after_order_status_kb())
 
 
 async def show_order_history_query(callback_query: CallbackQuery, phone_number: str):
@@ -100,10 +105,12 @@ async def show_order_history_query(callback_query: CallbackQuery, phone_number: 
             text="Мы не нашли старых заказов.", reply_markup=get_no_orders_kb(),
         )
     else:
-        orders_info = await process_order_data(orders)
         await callback_query.answer(text='Проверяем историю заказов')
+        orders_info = await process_order_data(orders)
         for order_info in orders_info:
             await callback_query.message.answer(text=order_info, reply_markup=ReplyKeyboardRemove())
+        await callback_query.message.answer(text='Вот всё, что мне удалось найти',
+                                            reply_markup=get_after_order_status_kb())
 
 
 async def show_order_history_msg(message: Message, phone_number: str):
@@ -116,3 +123,4 @@ async def show_order_history_msg(message: Message, phone_number: str):
         orders_info = await process_order_data(orders)
         for order_info in orders_info:
             await message.answer(text=order_info, reply_markup=ReplyKeyboardRemove())
+        await message.answer(text='Вот всё, что мне удалось найти', reply_markup=get_after_order_status_kb())

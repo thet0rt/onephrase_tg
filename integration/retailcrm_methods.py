@@ -20,7 +20,6 @@ async def get_orders_by_number(phone: str, actuality: str) -> Optional[list]:
                 response = await response.json()
                 if not response.get("success") or not response.get("orders"):
                     return
-                print(response)
                 print(response.get("orders"))  # todo delete
                 return response.get("orders")
         except Exception as e:

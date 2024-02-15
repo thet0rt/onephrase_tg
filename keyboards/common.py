@@ -17,7 +17,7 @@ def get_main_kb() -> InlineKeyboardMarkup:
     )
     kb.row(
         InlineKeyboardButton(
-            text="Проверить старые заказы", callback_data="check_order_history"
+            text="Проверить историю заказов", callback_data="check_order_history"
         )
     )
     kb.row(
