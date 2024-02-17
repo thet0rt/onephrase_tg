@@ -35,12 +35,15 @@ async def order_status(callback_query: CallbackQuery, state: FSMContext):
 
 @router.callback_query(F.data == "check_order_history")
 async def order_status(callback_query: CallbackQuery, state: FSMContext):
-    if phone_number := await check_authorization(str(callback_query.from_user.id)):
+    user_id = str(callback_query.from_user.id)
+    if phone_number := await check_authorization(user_id):
         await show_order_history_query(callback_query, phone_number)
     else:
         await state.set_state(CurrentLogic.order_history)
-        await callback_query.answer(
-            text="Проверяем авторизацию", reply_markup=get_authorize_kb()
+        await callback_query.answer("Проверяем авторизацию")
+        await callback_query.message.answer(
+            text="Чтобы увидеть свои заказы, пройдите авторизацию",
+            reply_markup=get_authorize_kb(),
         )
 
 

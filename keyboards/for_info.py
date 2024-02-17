@@ -1,6 +1,6 @@
 from aiogram.types import InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardButton
-from logic.info_logic import INFO_MSG_CONFIG
+from logic.configuration import INFO_MSG_CONFIG
 
 
 def get_main_info_kb() -> InlineKeyboardMarkup:
@@ -23,6 +23,9 @@ def get_main_info_kb() -> InlineKeyboardMarkup:
     )
     kb.row(
         InlineKeyboardButton(text='Срок изготовления и доставка', callback_data='terms_of_manufacturing')
+    )
+    kb.row(
+        InlineKeyboardButton(text='На главную', callback_data='back_to_menu')
     )
 
     return kb.as_markup()
