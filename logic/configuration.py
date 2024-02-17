@@ -61,7 +61,7 @@ GLOBAL_MSG_CONFIG = {
 Наш основной ассортимент: худи (футер, флис, garment dyed), футболки из трикотажа любого вида, шорты, спортивные штаны, бомберы, поло, шопперы, индивидуальные аксессуары.
 
 При заказе от 100 единиц доступен индивидуальный пошив.''',
-        'F&Q': {
+        'Q&A': {
             'best_practice': {'button_name': 'Что мы делаем лучше всего?',
                               'msg': '''todo'''},
             'application_type': {'button_name': 'Какие типы нанесения мы используем?',
@@ -76,10 +76,19 @@ GLOBAL_MSG_CONFIG = {
                          'msg': '''todo'''},
             'production_time': {'button_name': 'Срок изготовления партии',
                                 'msg': '''todo'''},
-        }}
+        }},
+    'custom_msg_cfg': {
+        'main_msg': '''Вы можете выбрать любую нашу модель и добавить свою фразу. Мы делаем только вышивку. Стоимость с вышивкой вашей фразы:
+
+худи овер в базовых цветах – 5490
+свит овер в базовых цветах – 4490
+базовые футболки от 2990
+футболки тру овер от 3490'''
+    }
 }
 INFO_MSG_CONFIG = GLOBAL_MSG_CONFIG.get('info_msg_cfg')
 BUSINESS_MSG_CONFIG = GLOBAL_MSG_CONFIG.get('business_msg_cfg')
+CUSTOM_MSG_CONFIG = GLOBAL_MSG_CONFIG.get('custom_msg_cfg')
 
 
 def get_price_msg(cloth_type: str) -> Optional[dict]:  # todo подумать может ошибку какую выкидывать если пусто

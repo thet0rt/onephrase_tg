@@ -1,8 +1,10 @@
 from aiogram import Router, F
 from aiogram.types import CallbackQuery
-from logic.configuration import INFO_MSG_CONFIG
-from keyboards.for_info import get_main_info_kb, get_price_kb, get_price_shown_kb
 
+from keyboards.for_info import *
+from logic.configuration import INFO_MSG_CONFIG, BUSINESS_MSG_CONFIG, CUSTOM_MSG_CONFIG
+
+FAQ_CFG = BUSINESS_MSG_CONFIG.get('Q&A')
 router = Router()  # [1]
 
 
@@ -15,6 +17,7 @@ async def info_menu(callback_query: CallbackQuery):
                                         reply_markup=get_main_info_kb())
 
 
+# region Price
 @router.callback_query(F.data.in_({'price', 'back_to_price'}))
 async def info_menu(callback_query: CallbackQuery):
     await callback_query.answer('')
@@ -30,3 +33,50 @@ async def price_info(callback_query: CallbackQuery):
     info_msg = INFO_MSG_CONFIG.get(item, {}).get('msg')
     await callback_query.message.answer(info_msg, reply_markup=get_price_shown_kb())
 
+
+# endregion
+
+
+# region Business
+@router.callback_query(F.data.in_({'for_business', 'back_to_business'}))
+async def business_menu(callback_query: CallbackQuery):
+    await callback_query.answer()
+    await callback_query.message.delete()
+    msg = BUSINESS_MSG_CONFIG.get('main_msg')
+    await callback_query.message.answer(text=msg, reply_markup=get_for_business_kb())
+
+
+@router.callback_query(F.data == 'collections')
+async def about_collections(callback_query: CallbackQuery):
+    await callback_query.answer()
+    await callback_query.message.delete()
+    msg = BUSINESS_MSG_CONFIG.get('main_msg')
+    await callback_query.message.answer(text=msg, reply_markup=get_collections_kb())
+
+
+@router.callback_query(F.data.in_(set(FAQ_CFG.keys())))
+async def show_answer(callback_query: CallbackQuery):
+    await callback_query.answer()
+    await callback_query.message.delete()
+    item = callback_query.data
+    msg = FAQ_CFG.get(item, {}).get('msg')
+    await callback_query.message.answer(text=msg, reply_markup=get_answered_kb())
+
+
+@router.callback_query(F.data.in_({'back_to_questions', 'Q&A'}))
+async def faq_menu(callback_query: CallbackQuery):
+    await callback_query.answer()
+    await callback_query.message.delete()
+    await callback_query.message.answer(text='Часто задаваемые вопросы', reply_markup=get_faq_kb())
+
+
+# endregion
+
+# region Custom
+@router.callback_query(F.data == 'custom')
+async def custom_info(callback_query: CallbackQuery):
+    await callback_query.answer()
+    await callback_query.message.delete()
+    msg = CUSTOM_MSG_CONFIG.get('main_msg')
+    await callback_query.message.answer(msg, reply_markup=get_custom_kb())
+# endregion
