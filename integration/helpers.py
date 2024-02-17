@@ -39,74 +39,96 @@ async def get_dispatch_msg(config: dict, status: str) -> str:
 
 
 def get_message_mapping_config(
-    codes_only: bool = False,
+        codes_only: bool = False,
 ) -> dict:  # todo change to real db later
     config = {
         "website-order": {
             "status_msg": "Ваш заказ в очереди на выполнение",
             "days_count": (5, 7),
+            "emoji": "⏳"
         },
         "not_ready": {
             "status_msg": "Ваш заказ в очереди на выполнение",
             "days_count": (5, 7),
+            "emoji": "⏳"
+
         },
-        "sertifivate": {"status_msg": "-", "days_count": 7 - 10},
+        "sertifivate": {"status_msg": "-", "days_count": 7 - 10,
+                        "emoji": "⏳"},
         "delay-new": {
             "status_msg": "Ваш заказ в очереди на изготовление,"
-            "может быть небольшая задержка",
+                          "может быть небольшая задержка",
             "days_count": 0,
+            "emoji": "⏳"
         },
         "product-booking-new": {
             "status_msg": "Ваш заказ в очереди на выполнение",
             "days_count": 0,
+            "emoji": "⏳"
         },
         "assembling": {"status_msg": "Ваш заказ изготавливается", "days_count": (3, 5)},
         "fail-gotov": {
             "status_msg": "Ваш заказ изготоваливается",
             "days_count": (3, 5),
+            "emoji": "⏳"
         },
         "assembling-complete": {
             "status_msg": "Ваш заказ изготоваливается",
             "days_count": (3, 5),
+            "emoji": "⏳"
         },
         "emb": {"status_msg": "Ваш заказ изготоваливается", "days_count": (3, 5)},
         "v-rabote": {
             "status_msg": "Мы уже сделали вышивку на вашем заказе, осталось подготовить вещи к отправке",
             "days_count": (2, 3),
+            "emoji": "⏳"
         },
         "pack-no-track-number": {
             "status_msg": "Мы уже сделали вышивку на вашем заказе,"
-            " осталось подготовить вещи к отправке",
+                          " осталось подготовить вещи к отправке",
             "days_count": (1, 2),
+            "emoji": "⏳"
         },
         "pack": {
             "status_msg": "Мы уже сделали вышивку на вашем заказе, осталось подготовить вещи к отправке",
             "days_count": (1, 2),
+            "emoji": "⏳"
         },
         "ready": {
             "status_msg": "Заказ передан курьеру и скоро начнет движение к вам",
             "days_count": (1, 2),
+            "emoji": "⏳"
         },
         "sent-to-delivery": {
             "status_msg": "Заказ готов и передан в доставку",
             "days_count": 0,
-        },  # todo later
+            "emoji": "🚛"
+        },
         "delivering": {
             "status_msg": "Заказ готов и передан в доставку",
             "days_count": 0,
+            "emoji": "🚛"
         },
         "redirect": {"status_msg": "Заказ готов и передан в доставку", "days_count": 0},
         "ready-for-self-pickup": {
             "status_msg": "Заказ готов и передан в доставку",
             "days_count": 0,
+            "emoji": "✅"
         },
         "arrived-in-pickup-point": {
             "status_msg": "Заказ готов и передан в доставку",
             "days_count": 0,
+            "emoji": "🚛"
         },
         "vozvrat-otpravleniia": {
             "status_msg": "Заказ готов и передан в доставку",
             "days_count": 0,
+            "emoji": "🚛"
+        },
+        "complete": {
+            "status_msg": "Получен.",
+            "days_count": 0,
+            "emoji": "✅"
         },
     }
     return config.keys() if codes_only else config
@@ -119,12 +141,31 @@ async def process_order_data(order_data: list) -> list[str]:
         number = order.get("number")
         status = order.get("status")
         items = order.get("items")
-        order_number_msg = f"Заказ №{number}"
+        emoji = config.get(status, {}).get('emoji', '')
+        order_number_msg = f"{emoji} Заказ №{number}"
         item_msg = get_item_list(items)
         status_msg = config.get(status, {}).get("status_msg")
         delivery_status_msg = await get_delivery_status_msg(order, status, config)
         message = (
             f"{order_number_msg}\n{status_msg}\n{item_msg}\n\n{delivery_status_msg}"
+        )
+        info_list.append(message)
+    return info_list
+
+
+async def process_completed_order(order_data: list) -> list[str]:
+    info_list = []
+    config = get_message_mapping_config()
+    for order in order_data:
+        number = order.get("number")
+        status = order.get("status")
+        items = order.get("items")
+        emoji = config.get(status, {}).get('emoji', '')
+        order_number_msg = f"{emoji} Заказ №{number}"
+        item_msg = get_item_list(items)
+        status_msg = config.get(status, {}).get("status_msg")
+        message = (
+            f"{order_number_msg}\n{status_msg}\n{item_msg}"
         )
         info_list.append(message)
     return info_list

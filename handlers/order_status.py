@@ -3,7 +3,7 @@ from typing import Optional
 from aiogram import Router, F, Bot
 from aiogram.types import Message, ReplyKeyboardRemove, CallbackQuery
 from integration.retailcrm_methods import get_orders_by_number
-from integration.helpers import process_order_data
+from integration.helpers import process_order_data, process_completed_order
 from db import set_to, get_from
 from aiogram.fsm.context import FSMContext
 from utils.states import CurrentLogic
@@ -79,7 +79,6 @@ async def authorize(message: Message, state: FSMContext):
         await show_actual_orders_msg(message, phone_number)
     elif await state.get_state() == CurrentLogic.order_history:
         await show_order_history_msg(message, phone_number)
-    # todo придумать как убрать кнопку авторизации
 
 
 async def check_authorization(user_id: str) -> Optional[str]:
@@ -88,10 +87,10 @@ async def check_authorization(user_id: str) -> Optional[str]:
 
 
 async def show_actual_orders_query(callback_query: CallbackQuery, phone_number: str):
+    await callback_query.answer()
     orders = await get_orders_by_number(phone_number, "new")
     print(orders)
     if not orders:
-        await callback_query.answer(" ")
         await callback_query.message.answer(
             text="Мы не нашли актуальных заказов.",
             reply_markup=get_no_orders_kb(),
@@ -117,7 +116,7 @@ async def show_actual_orders_msg(message: Message, phone_number: str):
             reply_markup=get_no_orders_kb(),
         )
     else:
-        orders_info = await process_order_data(orders)
+        orders_info = await process_completed_order(orders)
         for order_info in orders_info:
             await message.answer(text=order_info, reply_markup=ReplyKeyboardRemove())
         await message.answer(
@@ -135,7 +134,7 @@ async def show_order_history_query(callback_query: CallbackQuery, phone_number: 
         )
     else:
         await callback_query.answer(text="Проверяем историю заказов")
-        orders_info = await process_order_data(orders)
+        orders_info = await process_completed_order(orders)
         for order_info in orders_info:
             await callback_query.message.answer(
                 text=order_info, reply_markup=ReplyKeyboardRemove()

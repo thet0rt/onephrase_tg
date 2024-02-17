@@ -7,7 +7,7 @@ SUBDOMAIN = getenv("SUB_DOMAIN")
 TOKEN = getenv("RETAIL_CRM_TOKEN")
 
 
-async def get_orders_by_number(phone: str, actuality: str) -> Optional[list]:
+async def get_orders_by_number(phone: str, actuality: str) -> Optional[list]:   # todo обработка ошибок. Сделать ретрай
     url = f"https://{SUBDOMAIN}.retailcrm.ru/api/v5/orders?filter[customer]={phone}{get_status_filters(actuality)}"
 
     headers = {"X-API-KEY": TOKEN}
