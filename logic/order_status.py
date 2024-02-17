@@ -6,9 +6,11 @@ from aiogram.types import CallbackQuery, Message, ReplyKeyboardRemove
 
 from db import get_from
 from integration.cdek_methods import get_cdek_status
+from integration.ruspost_methods import get_ruspost_status
 from integration.helpers import get_message_mapping_config
 from integration.retailcrm_methods import get_orders_by_number
-from keyboards.for_order_status import get_no_new_orders_kb, get_no_old_orders_kb, get_after_order_status_kb, get_after_order_history_kb
+from keyboards.for_order_status import get_no_new_orders_kb, get_no_old_orders_kb, get_after_order_status_kb, \
+    get_after_order_history_kb
 
 
 async def check_authorization(user_id: str) -> Optional[str]:
@@ -162,9 +164,15 @@ async def get_delivery_status_msg(order: dict, status, config) -> str:
         "arrived-in-pickup-point",
         "vozvrat-otpravleniia",
     ]:
-        if order.get("delivery", {}).get("code") == "sdek-v-2":
+        delivery_type = order.get("delivery", {}).get("code")
+        if delivery_type == "sdek-v-2":
             delivery_msg = await get_cdek_msg(order)
             return delivery_msg
+        elif delivery_type == 'pochta-rossii-treking-tarifikator':
+            delivery_msg = await get_ruspost_msg(order)
+            return delivery_msg
+        print(order)
+
 
 
 async def get_cdek_msg(order: dict) -> Optional[str]:
@@ -175,6 +183,20 @@ async def get_cdek_msg(order: dict) -> Optional[str]:
     if not delivery_status or not planned_date:
         print(
             f"Something is wrong with cdek_status={cdek_status}"
+        )  # todo change to logging
+        return ""
+    delivery_msg = f"\nСтатус доставки: {delivery_status}\nОриентировочная дата прибытия: {planned_date}"
+    return delivery_msg
+
+
+async def get_ruspost_msg(order: dict) -> Optional[str]:
+    ruspost_tracking_number = order.get("delivery", {}).get("data", {}).get("trackNumber")
+    ruspost_status = await get_ruspost_status(ruspost_tracking_number)
+    delivery_status = ruspost_status.get("status")
+    planned_date = ruspost_status.get("planned_date")
+    if not delivery_status or not planned_date:
+        print(
+            f"Something is wrong with ruspost_status={ruspost_status}"
         )  # todo change to logging
         return ""
     delivery_msg = f"\nСтатус доставки: {delivery_status}\nОриентировочная дата прибытия: {planned_date}"

@@ -37,15 +37,17 @@ async def get_ruspost_order_info(ext_order_id) -> dict:
 
 async def get_ruspost_status(ruspost_tracking_number) -> dict:
     ruspost_status = {"status": None, "planned_date": None}
-    order_info = await get_ruspost_parcel(ruspost_tracking_number)
+    print(ruspost_tracking_number)
+    order_info = await get_ruspost_order_info(ruspost_tracking_number)
     try:
         status_info = order_info.get('detailedTrackings', {})[0].get('trackingItem')
         status = status_info.get('commonStatus')
-        expected_delivery_date = status_info.get('shipmentTripInfo', {}).get('expectedDeliveryDate')
+        expected_delivery_date = status_info.get('shipmentTripInfo', {}).get('expectedDeliveryDate')[:10]
         ruspost_status.update(
             status=status,
             planned_date=expected_delivery_date
         )
+        print(ruspost_status)
     except (IndexError, AttributeError) as e:
         print(e)
         pass  # todo logging

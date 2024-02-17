@@ -82,7 +82,7 @@ def get_message_mapping_config(
             "emoji": "⏳",
             'category': 'active'
         },
-        "sent-to-delivery": {
+        "send-to-delivery": {
             "status_msg": "Заказ готов и передан в доставку",
             "days_count": 0,
             "emoji": "🚛",
