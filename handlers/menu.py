@@ -1,8 +1,7 @@
 from aiogram import Router, F
 from aiogram.filters import Command
-from aiogram.types import Message, ReplyKeyboardRemove, Update, CallbackQuery
-from aiogram.handlers import InlineQueryHandler
-from aiogram.types import FSInputFile, CallbackQuery, InlineQuery, ChosenInlineResult
+from aiogram.types import FSInputFile, CallbackQuery
+from aiogram.types import Message
 
 from keyboards.common import get_main_kb
 

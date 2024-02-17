@@ -2,8 +2,8 @@ import os
 from typing import Optional
 
 import aiohttp
-import asyncio
 from dotenv import load_dotenv
+
 from db import get_from, set_to
 
 load_dotenv("../.env")  # todo delete later
@@ -69,11 +69,3 @@ async def get_cdek_status(cdek_uuid) -> dict:
         planned_date=order_info.get("entity", {}).get("planned_delivery_date")
     )
     return cdek_status
-
-
-#
-# async def main():
-#     response = await get_cdek_order_info(cdek_uuid='72753032-5f07-464c-a1b1-c8281678718d')
-#     print(response)
-#
-# asyncio.run(main())

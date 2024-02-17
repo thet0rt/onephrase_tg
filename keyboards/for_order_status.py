@@ -17,14 +17,13 @@ def get_authorize_kb() -> ReplyKeyboardMarkup:
 
 def get_no_orders_kb() -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
-    kb.row(InlineKeyboardButton(text="Оформить новый заказ", callback_data="new_order"))  # todo smth here
-    kb.row(
-        InlineKeyboardButton(text="Позвать менеджера", callback_data="ask_for_manager")
-    )
     kb.row(
         InlineKeyboardButton(
-            text="Проверить историю заказов", callback_data="check_order_history"
+            text="Посмотреть старые заказы", callback_data="check_order_history"
         )
+    )
+    kb.row(
+        InlineKeyboardButton(text="Позвать менеджера", callback_data="ask_for_manager")
     )
     kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
     return kb.as_markup()
@@ -66,6 +65,19 @@ def get_after_order_status_kb() -> InlineKeyboardMarkup:
         InlineKeyboardButton(
             text="Перейти на сайт", url="https://onephrase.ru/?utm_source=tg&utm_medium=tg_bot", callback_data="-"
         )  # todo посмотреть что тут можно сделать
+    )
+    kb.row(InlineKeyboardButton(text="Оформить новый заказ", callback_data="new_order"))  # todo smth here
+    kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
+
+    return kb.as_markup()
+
+
+def get_after_order_history_kb() -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
+    kb.row(
+        InlineKeyboardButton(
+            text="Проверить актуальные заказы", callback_data="order_status"
+        )
     )
     kb.row(InlineKeyboardButton(text="Оформить новый заказ", callback_data="new_order"))  # todo smth here
     kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
