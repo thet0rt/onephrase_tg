@@ -8,3 +8,4 @@ def get_yes_no_kb() -> ReplyKeyboardMarkup:
     kb.button(text="Нет")
     kb.adjust(2)
     return kb.as_markup(resize_keyboard=True)
+
