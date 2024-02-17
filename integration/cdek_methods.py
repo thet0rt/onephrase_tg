@@ -30,7 +30,8 @@ async def get_cdek_token():
                 response = await response.json()
                 access_token = response.get("access_token")
                 await set_to("cdek_token", access_token, 3500)
-                return response.get("access_token")
+                print(response)
+                return access_token
         except Exception as e:
             print(e)
             return  # todo add logging
@@ -38,6 +39,7 @@ async def get_cdek_token():
 
 async def get_cdek_order_info(cdek_uuid) -> Optional[dict]:
     cdek_token = await get_from("cdek_token") or await get_cdek_token()
+    print(cdek_token)
     url = f"https://api.cdek.ru/v2/orders/{cdek_uuid}"
     headers = {
         "accept": "application/json",
@@ -50,6 +52,7 @@ async def get_cdek_order_info(cdek_uuid) -> Optional[dict]:
                 url, headers=headers, raise_for_status=True
             ) as response:
                 response = await response.json()
+                print(response)
                 return response
         except Exception as e:
             print(e)

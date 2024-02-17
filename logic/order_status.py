@@ -8,7 +8,7 @@ from db import get_from
 from integration.cdek_methods import get_cdek_status
 from integration.helpers import get_message_mapping_config
 from integration.retailcrm_methods import get_orders_by_number
-from keyboards.for_order_status import get_no_orders_kb, get_after_order_status_kb
+from keyboards.for_order_status import get_no_new_orders_kb, get_no_old_orders_kb, get_after_order_status_kb, get_after_order_history_kb
 
 
 async def check_authorization(user_id: str) -> Optional[str]:
@@ -18,13 +18,14 @@ async def check_authorization(user_id: str) -> Optional[str]:
 
 async def show_actual_orders_query(callback_query: CallbackQuery, phone_number: str):
     await callback_query.answer()
+    print('here_1')
     orders = await get_orders_by_number(phone_number, "new")
     print(orders)
     if not orders:
         await callback_query.message.answer(
             text="🤔 Не нашли активных заказов, если вы считаете, "
             "что это ошибка – позовите менеджера, он проверит вручную.",
-            reply_markup=get_no_orders_kb(),
+            reply_markup=get_no_new_orders_kb(),
         )
     else:
         orders_info = await process_order_data(orders)
@@ -40,12 +41,13 @@ async def show_actual_orders_query(callback_query: CallbackQuery, phone_number: 
 
 async def show_actual_orders_msg(message: Message, phone_number: str):
     orders = await get_orders_by_number(phone_number, "new")
+    print('here_2')
     print(orders)
     if not orders:
         await message.answer(
             text="🤔 Не нашли активных заказов, если вы считаете, "
             "что это ошибка – позовите менеджера, он проверит вручную.",
-            reply_markup=get_no_orders_kb(),
+            reply_markup=get_no_new_orders_kb(),
         )
     else:
         orders_info = await process_order_data(orders)
@@ -53,7 +55,7 @@ async def show_actual_orders_msg(message: Message, phone_number: str):
             await message.answer(text=order_info, reply_markup=ReplyKeyboardRemove())
         await message.answer(
             text="Вот всё, что мне удалось найти",
-            reply_markup=get_after_order_status_kb(),
+            reply_markup=get_after_order_history_kb(),
         )
 
 
@@ -62,7 +64,7 @@ async def show_order_history_query(callback_query: CallbackQuery, phone_number: 
     if not orders:
         await callback_query.message.answer(
             text="Мы не нашли старых заказов.",
-            reply_markup=get_no_orders_kb(),
+            reply_markup=get_no_old_orders_kb(),
         )
     else:
         await callback_query.answer(text="Проверяем историю заказов")
@@ -73,7 +75,7 @@ async def show_order_history_query(callback_query: CallbackQuery, phone_number: 
             )
         await callback_query.message.answer(
             text="Вот всё, что мне удалось найти",
-            reply_markup=get_after_order_status_kb(),
+            reply_markup=get_after_order_history_kb(),
         )
 
 
@@ -82,7 +84,7 @@ async def show_order_history_msg(message: Message, phone_number: str):
     if not orders:
         await message.answer(
             text="Мы не нашли старых заказов.",
-            reply_markup=get_no_orders_kb(),
+            reply_markup=get_no_old_orders_kb(),
         )
     else:
         orders_info = await process_completed_order(orders)
@@ -100,6 +102,7 @@ async def process_order_data(order_data: list) -> list[str]:
     for order in order_data:
         number = order.get("number")
         status = order.get("status")
+        print(status)
         items = order.get("items")
         emoji = config.get(status, {}).get("emoji", "")
         order_number_msg = f"{emoji} Заказ №{number}"
@@ -119,6 +122,7 @@ async def process_completed_order(order_data: list) -> list[str]:
     for order in order_data:
         number = order.get("number")
         status = order.get("status")
+        print(status)
         items = order.get("items")
         emoji = config.get(status, {}).get("emoji", "")
         order_number_msg = f"{emoji} Заказ №{number}"

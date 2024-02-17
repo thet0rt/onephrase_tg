@@ -11,7 +11,7 @@ async def get_orders_by_number(
     phone: str, actuality: str
 ) -> Optional[list]:  # todo обработка ошибок. Сделать ретрай
     url = f"https://{SUBDOMAIN}.retailcrm.ru/api/v5/orders?filter[customer]={phone}{get_status_filters(actuality)}"
-
+    print(url)
     headers = {"X-API-KEY": TOKEN}
 
     async with aiohttp.ClientSession() as session:

@@ -18,6 +18,6 @@ async def set_to(key: str, val: str, ex: Optional[int]) -> bool:
     res = await redis_client.set(
         name=key,
         ex=timedelta(seconds=ex),
-        value=json.dumps(val),
+        value=val,
     )
     return res
