@@ -8,8 +8,13 @@ from keyboards.for_order_status import (
     get_subscribe_kb,
     get_subscribe_success_kb,
 )
-from logic.order_status import check_authorization, \
-    show_actual_orders_query, show_order_history_query, show_actual_orders_msg, show_order_history_msg
+from logic.order_status import (
+    check_authorization,
+    show_actual_orders_query,
+    show_order_history_query,
+    show_actual_orders_msg,
+    show_order_history_msg,
+)
 from utils.states import CurrentLogic
 
 router = Router()  # [1]

@@ -14,7 +14,9 @@ async def main():
     token = getenv("BOT_TOKEN")
     bot = Bot(token=token)
     dp = Dispatcher()
-    dp.include_routers(menu.router, different_types.router, order_status.router, info.router)
+    dp.include_routers(
+        menu.router, different_types.router, order_status.router, info.router
+    )
 
     # Запускаем бота и пропускаем все накопленные входящие
     # Да, этот метод можно вызвать даже если у вас поллинг

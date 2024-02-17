@@ -23,7 +23,7 @@ async def show_actual_orders_query(callback_query: CallbackQuery, phone_number: 
     if not orders:
         await callback_query.message.answer(
             text="🤔 Не нашли активных заказов, если вы считаете, "
-                 "что это ошибка – позовите менеджера, он проверит вручную.",
+            "что это ошибка – позовите менеджера, он проверит вручную.",
             reply_markup=get_no_orders_kb(),
         )
     else:
@@ -44,7 +44,7 @@ async def show_actual_orders_msg(message: Message, phone_number: str):
     if not orders:
         await message.answer(
             text="🤔 Не нашли активных заказов, если вы считаете, "
-                 "что это ошибка – позовите менеджера, он проверит вручную.",
+            "что это ошибка – позовите менеджера, он проверит вручную.",
             reply_markup=get_no_orders_kb(),
         )
     else:
@@ -101,7 +101,7 @@ async def process_order_data(order_data: list) -> list[str]:
         number = order.get("number")
         status = order.get("status")
         items = order.get("items")
-        emoji = config.get(status, {}).get('emoji', '')
+        emoji = config.get(status, {}).get("emoji", "")
         order_number_msg = f"{emoji} Заказ №{number}"
         item_msg = get_item_list(items)
         status_msg = config.get(status, {}).get("status_msg")
@@ -120,13 +120,11 @@ async def process_completed_order(order_data: list) -> list[str]:
         number = order.get("number")
         status = order.get("status")
         items = order.get("items")
-        emoji = config.get(status, {}).get('emoji', '')
+        emoji = config.get(status, {}).get("emoji", "")
         order_number_msg = f"{emoji} Заказ №{number}"
         item_msg = get_item_list(items)
         status_msg = config.get(status, {}).get("status_msg")
-        message = (
-            f"{order_number_msg}\n{status_msg}\n{item_msg}"
-        )
+        message = f"{order_number_msg}\n{status_msg}\n{item_msg}"
         info_list.append(message)
     return info_list
 
@@ -174,7 +172,7 @@ async def get_cdek_msg(order: dict) -> Optional[str]:
         print(
             f"Something is wrong with cdek_status={cdek_status}"
         )  # todo change to logging
-        return ''
+        return ""
     delivery_msg = f"\nСтатус доставки: {delivery_status}\nОриентировочная дата прибытия: {planned_date}"
     return delivery_msg
 
