@@ -69,7 +69,7 @@ async def get_sale(callback_query: CallbackQuery, state: FSMContext, bot: Bot):
 
 @router.message(F.content_type.in_({"contact"}))
 async def authorize(message: Message, state: FSMContext):
-    phone_number = '79019308831' or message.contact.phone_number
+    phone_number = '79244996888' or message.contact.phone_number
     await set_to(str(message.from_user.id), str(phone_number), ex=3600)
     await message.answer(
         "Спасибо! Теперь мы сможем найти Ваши заказы",

@@ -194,12 +194,15 @@ async def get_ruspost_msg(order: dict) -> Optional[str]:
     ruspost_status = await get_ruspost_status(ruspost_tracking_number)
     delivery_status = ruspost_status.get("status")
     planned_date = ruspost_status.get("planned_date")
-    if not delivery_status or not planned_date:
+    if not delivery_status:
         print(
             f"Something is wrong with ruspost_status={ruspost_status}"
         )  # todo change to logging
         return ""
-    delivery_msg = f"\nСтатус доставки: {delivery_status}\nОриентировочная дата прибытия: {planned_date}"
+    delivery_msg = f"\nСтатус доставки: {delivery_status}"
+    if planned_date:
+        delivery_msg += "\nОриентировочная дата прибытия: {planned_date}"
+
     return delivery_msg
 
 
