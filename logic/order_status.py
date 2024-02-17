@@ -183,4 +183,3 @@ async def get_dispatch_msg(config: dict, status: str) -> str:
     sending_date_1 = sending_date_1.strftime("%d.%m.%Y")
     sending_date_2 = sending_date_2.strftime("%d.%m.%Y")
     return f"Ориентировочная дата отправки {sending_date_1} - {sending_date_2}"
-
