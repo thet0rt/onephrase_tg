@@ -43,12 +43,12 @@ async def get_ruspost_status(ruspost_tracking_number) -> dict:
         expected_delivery_date = status_info.get('shipmentTripInfo', {}).get('expectedDeliveryDate')
         if expected_delivery_date:
             expected_delivery_date = expected_delivery_date[:10]
-            log.debug(f'{expected_delivery_date=}')
+            log.debug('Expected_delivery_date = %s', expected_delivery_date)
             ruspost_status.update(
                 status=status,
                 planned_date=expected_delivery_date
             )
         log.debug('ruspost_status=%s', ruspost_status)
     except (TypeError, IndexError, AttributeError) as e:
-        log.error('Error while getting ruspost stastus', e)
+        log.error('Error while getting ruspost stastus, exc = %s', e)
     return ruspost_status

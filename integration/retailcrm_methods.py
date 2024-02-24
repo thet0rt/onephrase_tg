@@ -23,8 +23,7 @@ async def get_orders_by_number(
                 response = await response.json()
                 if not response.get("success") or not response.get("orders"):
                     return
-                log.debug(response)
                 return response.get("orders")
         except Exception as e:
-            log.error(e)
+            log.error('Error while getting order_info from CRM, exc = %e', e)
             return

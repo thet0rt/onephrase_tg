@@ -77,8 +77,9 @@ async def authorize(message: Message, state: FSMContext):
         "Спасибо! Теперь мы сможем найти Ваши заказы",
         reply_markup=ReplyKeyboardRemove(),
     )
-    log.debug(await state.get_state())
-    if await state.get_state() == CurrentLogic.order_status:
+    state = await state.get_state()
+    log.debug(state)
+    if state == CurrentLogic.order_status:
         await show_actual_orders_msg(message, phone_number)
-    elif await state.get_state() == CurrentLogic.order_history:
+    elif state == CurrentLogic.order_history:
         await show_order_history_msg(message, phone_number)

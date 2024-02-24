@@ -13,14 +13,11 @@ class LoggingMiddleware(BaseMiddleware):
         data: Dict[str, Any]
     ) -> Any:
         user_id = event.from_user.id
-        log.info(f'Received message from user={user_id}, ')
-        log.debug(type(event))
-        log.debug("Before handler")
-
+        log.info('Received message from user = %s', user_id)
         try:
             result = await handler(event, data)
-            log.debug("After handler")
+            log.debug("After handler, user_id = %s", user_id)
             return result
         except Exception as e:
-            log.error(f'user_id={user_id}, exc={e}')
-        log.debug("After handler")
+            log.error('user_id= %s, exc=%s', user_id, e)
+            log.debug("After handler, user_id = %s", user_id)

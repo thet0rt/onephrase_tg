@@ -30,11 +30,10 @@ async def get_cdek_token():
             ) as response:
                 response = await response.json()
                 access_token = response.get("access_token")
-                log.debug(response)
                 await set_to("cdek_token", access_token, 3500)
                 return access_token
         except Exception as e:
-            log.error(e)
+            log.error('Error while getting cdek_token exc = %s', e)
             return
 
 
@@ -52,10 +51,9 @@ async def get_cdek_order_info(cdek_uuid) -> Optional[dict]:
                 url, headers=headers, raise_for_status=True
             ) as response:
                 response = await response.json()
-                log.debug(response)
                 return response
         except Exception as e:
-            log.error(e)
+            log.error('Error while getting cdek_order_info e = %s', e)
             return
 
 
