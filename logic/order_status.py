@@ -11,6 +11,7 @@ from integration.helpers import get_message_mapping_config
 from integration.retailcrm_methods import get_orders_by_number
 from keyboards.for_order_status import get_no_new_orders_kb, get_no_old_orders_kb, get_after_order_status_kb, \
     get_after_order_history_kb
+from log_settings import log
 
 
 async def check_authorization(user_id: str) -> Optional[str]:
@@ -20,13 +21,11 @@ async def check_authorization(user_id: str) -> Optional[str]:
 
 async def show_actual_orders_query(callback_query: CallbackQuery, phone_number: str):
     await callback_query.answer()
-    print('here_1')
     orders = await get_orders_by_number(phone_number, "new")
-    print(orders)
     if not orders:
         await callback_query.message.answer(
             text="🤔 Не нашли активных заказов, если вы считаете, "
-            "что это ошибка – позовите менеджера, он проверит вручную.",
+                 "что это ошибка – позовите менеджера, он проверит вручную.",
             reply_markup=get_no_new_orders_kb(),
         )
     else:
@@ -43,12 +42,10 @@ async def show_actual_orders_query(callback_query: CallbackQuery, phone_number: 
 
 async def show_actual_orders_msg(message: Message, phone_number: str):
     orders = await get_orders_by_number(phone_number, "new")
-    print('here_2')
-    print(orders)
     if not orders:
         await message.answer(
             text="🤔 Не нашли активных заказов, если вы считаете, "
-            "что это ошибка – позовите менеджера, он проверит вручную.",
+                 "что это ошибка – позовите менеджера, он проверит вручную.",
             reply_markup=get_no_new_orders_kb(),
         )
     else:
@@ -104,7 +101,6 @@ async def process_order_data(order_data: list) -> list[str]:
     for order in order_data:
         number = order.get("number")
         status = order.get("status")
-        print(status)
         items = order.get("items")
         emoji = config.get(status, {}).get("emoji", "")
         order_number_msg = f"{emoji} Заказ №{number}"
@@ -124,7 +120,6 @@ async def process_completed_order(order_data: list) -> list[str]:
     for order in order_data:
         number = order.get("number")
         status = order.get("status")
-        print(status)
         items = order.get("items")
         emoji = config.get(status, {}).get("emoji", "")
         order_number_msg = f"{emoji} Заказ №{number}"
@@ -171,8 +166,6 @@ async def get_delivery_status_msg(order: dict, status, config) -> str:
         elif delivery_type == 'pochta-rossii-treking-tarifikator':
             delivery_msg = await get_ruspost_msg(order)
             return delivery_msg
-        print(order)
-
 
 
 async def get_cdek_msg(order: dict) -> Optional[str]:
@@ -181,9 +174,7 @@ async def get_cdek_msg(order: dict) -> Optional[str]:
     delivery_status = cdek_status.get("status")
     planned_date = cdek_status.get("planned_date")
     if not delivery_status or not planned_date:
-        print(
-            f"Something is wrong with cdek_status={cdek_status}"
-        )  # todo change to logging
+        log.error('Something is wrong with cdek_status = %s', cdek_status)
         return ""
     delivery_msg = f"\nСтатус доставки: {delivery_status}\nОриентировочная дата прибытия: {planned_date}"
     return delivery_msg
@@ -195,9 +186,7 @@ async def get_ruspost_msg(order: dict) -> Optional[str]:
     delivery_status = ruspost_status.get("status")
     planned_date = ruspost_status.get("planned_date")
     if not delivery_status:
-        print(
-            f"Something is wrong with ruspost_status={ruspost_status}"
-        )  # todo change to logging
+        log.error('Something is wrong with ruspost = %s', ruspost_status)
         return ""
     delivery_msg = f"\nСтатус доставки: {delivery_status}"
     if planned_date:

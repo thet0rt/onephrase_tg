@@ -1,12 +1,10 @@
 import os
-from typing import Optional
 
 import aiohttp
-import asyncio
+from log_settings import log
 from dotenv import load_dotenv
 
-
-load_dotenv("../.env")  # todo delete later
+load_dotenv("../.env")
 
 RUSPOST_TOKEN = os.getenv("RUSPOST_TOKEN")
 RUSPOST_KEY = os.getenv("RUSPOST_KEY")
@@ -25,43 +23,32 @@ async def get_ruspost_order_info(ext_order_id) -> dict:
     async with aiohttp.ClientSession() as session:
         try:
             async with session.get(
-                url, headers=headers, raise_for_status=True
+                    url, headers=headers, raise_for_status=True
             ) as response:
-                print(response.text)
                 response = await response.json()
+                log.debug('Ruspost response = %s', response)
                 return response
         except Exception as e:
-            print(e)
+            log.error('Error while making ruspost request e= %s', e)
             return {}
 
 
 async def get_ruspost_status(ruspost_tracking_number) -> dict:
     ruspost_status = {"status": None, "planned_date": None}
-    print(ruspost_tracking_number)
+    log.debug('ruspost_tracking_number = %s', ruspost_tracking_number)
     order_info = await get_ruspost_order_info(ruspost_tracking_number)
     try:
         status_info = order_info.get('detailedTrackings', {})[0].get('trackingItem')
-        print(status_info)
         status = status_info.get('commonStatus')
-        print(status)
         expected_delivery_date = status_info.get('shipmentTripInfo', {}).get('expectedDeliveryDate')
         if expected_delivery_date:
             expected_delivery_date = expected_delivery_date[:10]
-        print(expected_delivery_date)
-        ruspost_status.update(
-            status=status,
-            planned_date=expected_delivery_date
-        )
-        print(ruspost_status)
+            log.debug(f'{expected_delivery_date=}')
+            ruspost_status.update(
+                status=status,
+                planned_date=expected_delivery_date
+            )
+        log.debug('ruspost_status=%s', ruspost_status)
     except (TypeError, IndexError, AttributeError) as e:
-        print(e)
-        print(order_info)
-        pass  # todo logging
+        log.error('Error while getting ruspost stastus', e)
     return ruspost_status
-
-
-# async def main():
-#     response = await get_ruspost_order_info('80081292072278')
-#     print(response)
-#
-# asyncio.run(main())

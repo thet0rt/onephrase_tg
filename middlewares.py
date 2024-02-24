@@ -14,8 +14,13 @@ class LoggingMiddleware(BaseMiddleware):
     ) -> Any:
         user_id = event.from_user.id
         log.info(f'Received message from user={user_id}, ')
-        print(type(event))
-        print("Before handler")
-        result = await handler(event, data)
-        print("After handler")
-        return result
+        log.debug(type(event))
+        log.debug("Before handler")
+
+        try:
+            result = await handler(event, data)
+            log.debug("After handler")
+            return result
+        except Exception as e:
+            log.error(f'user_id={user_id}, exc={e}')
+        log.debug("After handler")

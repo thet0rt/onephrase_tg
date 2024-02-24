@@ -5,6 +5,7 @@ import aiohttp
 from dotenv import load_dotenv
 
 from db import get_from, set_to
+from log_settings import log
 
 load_dotenv("../.env")  # todo delete later
 
@@ -29,17 +30,16 @@ async def get_cdek_token():
             ) as response:
                 response = await response.json()
                 access_token = response.get("access_token")
+                log.debug(response)
                 await set_to("cdek_token", access_token, 3500)
-                print(response)
                 return access_token
         except Exception as e:
-            print(e)
-            return  # todo add logging
+            log.error(e)
+            return
 
 
 async def get_cdek_order_info(cdek_uuid) -> Optional[dict]:
     cdek_token = await get_from("cdek_token") or await get_cdek_token()
-    print(cdek_token)
     url = f"https://api.cdek.ru/v2/orders/{cdek_uuid}"
     headers = {
         "accept": "application/json",
@@ -52,17 +52,17 @@ async def get_cdek_order_info(cdek_uuid) -> Optional[dict]:
                 url, headers=headers, raise_for_status=True
             ) as response:
                 response = await response.json()
-                print(response)
+                log.debug(response)
                 return response
         except Exception as e:
-            print(e)
-            return  # todo add logging
+            log.error(e)
+            return
 
 
 async def get_cdek_status(cdek_uuid) -> dict:
     cdek_status = {"status": None, "planned_date": None}
     order_info = await get_cdek_order_info(cdek_uuid)
-    print(order_info)
+    log.debug(order_info)
     status_list = order_info.get("entity", {}).get(
         "statuses"
     )  # todo проверить если несколько packages

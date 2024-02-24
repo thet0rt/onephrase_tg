@@ -1,3 +1,6 @@
+from log_settings import log
+
+
 def get_status_filters(actuality: str) -> str:
     filters = ""
     if actuality == "new":
@@ -6,7 +9,7 @@ def get_status_filters(actuality: str) -> str:
     elif actuality == "old":
         for status_code in get_message_mapping_config(codes_only=True, categories=('done',)):
             filters += f"&filter[extendedStatus][]={status_code}"
-    print(filters)
+    log.debug('filters= %s', filters)
     return filters
 
 

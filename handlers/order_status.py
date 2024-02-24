@@ -8,6 +8,7 @@ from keyboards.for_order_status import (
     get_subscribe_kb,
     get_subscribe_success_kb,
 )
+from log_settings import log
 from logic.order_status import (
     check_authorization,
     show_actual_orders_query,
@@ -22,6 +23,7 @@ router = Router()  # [1]
 
 @router.callback_query(F.data == "order_status")
 async def order_status(callback_query: CallbackQuery, state: FSMContext):
+    await set_to('test', 'test', 3600)  # todo delete later
     user_id = str(callback_query.from_user.id)
     if phone_number := await check_authorization(user_id):
         await show_actual_orders_query(callback_query, phone_number)
@@ -75,7 +77,7 @@ async def authorize(message: Message, state: FSMContext):
         "Спасибо! Теперь мы сможем найти Ваши заказы",
         reply_markup=ReplyKeyboardRemove(),
     )
-    print(await state.get_state())
+    log.debug(await state.get_state())
     if await state.get_state() == CurrentLogic.order_status:
         await show_actual_orders_msg(message, phone_number)
     elif await state.get_state() == CurrentLogic.order_history:
