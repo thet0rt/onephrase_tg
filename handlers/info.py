@@ -54,7 +54,7 @@ async def business_menu(callback_query: CallbackQuery):
 async def about_collections(callback_query: CallbackQuery):
     await callback_query.answer()
     await callback_query.message.delete()
-    msg = BUSINESS_MSG_CONFIG.get("main_msg")
+    msg = BUSINESS_MSG_CONFIG.get("collections_msg")
     await callback_query.message.answer(text=msg, reply_markup=get_collections_kb())
 
 
@@ -67,12 +67,13 @@ async def show_answer(callback_query: CallbackQuery):
     await callback_query.message.answer(text=msg, reply_markup=get_answered_kb())
 
 
-@router.callback_query(F.data.in_({"back_to_questions", "Q&A"}))
+@router.callback_query(F.data.in_({"back_to_questions", "Q&A", "Q&A_from_manager"}))
 async def faq_menu(callback_query: CallbackQuery):
     await callback_query.answer()
     await callback_query.message.delete()
+    reply_kb = get_faq_kb() if callback_query.data != 'Q&A_from_manager' else get_faq_kb_from_manager()
     await callback_query.message.answer(
-        text="Часто задаваемые вопросы", reply_markup=get_faq_kb()
+        text="Часто задаваемые вопросы", reply_markup=reply_kb
     )
 
 

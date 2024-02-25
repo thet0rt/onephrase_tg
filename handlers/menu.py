@@ -27,7 +27,7 @@ async def order_status(callback_query: CallbackQuery):
     )
 
 
-@router.callback_query(F.data == "back_to_menu")
+@router.callback_query(F.data == "ask_for_manager")
 async def ask_for_manager(callback_query: CallbackQuery):
     await callback_query.answer()
     msg_answer = ('Позвали человека, надеемся он поможет!'

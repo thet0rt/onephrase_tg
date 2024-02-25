@@ -35,6 +35,7 @@ def get_price_kb() -> InlineKeyboardMarkup:
                 text=item_settings.get("button_name"), callback_data=item
             )
         )
+    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_common_questions"))
     kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
 
     return kb.as_markup()
@@ -88,6 +89,21 @@ def get_faq_kb() -> InlineKeyboardMarkup:
             )
         )
     kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_business"))
+    kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
+
+    return kb.as_markup()
+
+
+def get_faq_kb_from_manager() -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
+
+    faq_cfg = BUSINESS_MSG_CONFIG.get("Q&A")
+    for question, question_settings in faq_cfg.items():
+        kb.row(
+            InlineKeyboardButton(
+                text=question_settings.get("button_name"), callback_data=question
+            )
+        )
     kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
 
     return kb.as_markup()
