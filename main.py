@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 
-load_dotenv(".env")
+load_dotenv("dev.env")  # todo change to prod when deploy
 
 from os import getenv
 import asyncio
@@ -8,7 +8,7 @@ from aiogram import Bot, Dispatcher
 from middlewares import LoggingMiddleware
 
 
-from handlers import menu, different_types, order_status, info
+from handlers import menu, order_status, info
 
 
 # Запуск бота
@@ -17,7 +17,7 @@ async def main():
     bot = Bot(token=token)
     dp = Dispatcher()
     dp.include_routers(
-        menu.router, different_types.router, order_status.router, info.router
+        menu.router, order_status.router, info.router
     )
     dp.message.middleware(LoggingMiddleware())
     dp.callback_query.middleware(LoggingMiddleware())

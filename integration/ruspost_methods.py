@@ -2,9 +2,7 @@ import os
 
 import aiohttp
 from log_settings import log
-from dotenv import load_dotenv
 
-load_dotenv("../.env")
 
 RUSPOST_TOKEN = os.getenv("RUSPOST_TOKEN")
 RUSPOST_KEY = os.getenv("RUSPOST_KEY")

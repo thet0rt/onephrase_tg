@@ -6,11 +6,11 @@ from aiogram.types import CallbackQuery, Message, ReplyKeyboardRemove
 
 from db import get_from
 from integration.cdek_methods import get_cdek_status
-from integration.ruspost_methods import get_ruspost_status
 from integration.helpers import get_message_mapping_config
-from integration.retailcrm_methods import get_orders_by_number
+from integration.retailcrm_methods import get_orders_by_phone_number, get_orders_by_order_number
+from integration.ruspost_methods import get_ruspost_status
 from keyboards.for_order_status import get_no_new_orders_kb, get_no_old_orders_kb, get_after_order_status_kb, \
-    get_after_order_history_kb
+    get_after_order_history_kb, get_no_order_kb, get_after_order_number_kb
 from log_settings import log
 
 
@@ -19,9 +19,32 @@ async def check_authorization(user_id: str) -> Optional[str]:
     return phone_number
 
 
+def normalize_order_number(order_number: str) -> str:
+    order_number = order_number.replace('А', 'A')
+    order_number = order_number.replace('С', 'C')
+    return order_number
+
+
+async def show_order_by_order_number(message: Message, order_number: str):
+    order_number = normalize_order_number(order_number)
+    orders = await get_orders_by_order_number(order_number)
+    if not orders:
+        await message.answer(
+            text="🤔 Не нашли такого заказа, если вы считаете, "
+                 "что это ошибка – позовите менеджера, он проверит вручную.",
+            reply_markup=get_no_order_kb(),
+        )
+    else:
+        orders_info = await process_order_data(orders)
+        for order_info in orders_info:
+            await message.answer(
+                text=order_info, reply_markup=get_after_order_number_kb()
+            )
+
+
 async def show_actual_orders_query(callback_query: CallbackQuery, phone_number: str):
     await callback_query.answer()
-    orders = await get_orders_by_number(phone_number, "new")
+    orders = await get_orders_by_phone_number(phone_number, "new")
     if not orders:
         await callback_query.message.answer(
             text="🤔 Не нашли активных заказов, если вы считаете, "
@@ -41,7 +64,7 @@ async def show_actual_orders_query(callback_query: CallbackQuery, phone_number: 
 
 
 async def show_actual_orders_msg(message: Message, phone_number: str):
-    orders = await get_orders_by_number(phone_number, "new")
+    orders = await get_orders_by_phone_number(phone_number, "new")
     if not orders:
         await message.answer(
             text="🤔 Не нашли активных заказов, если вы считаете, "
@@ -59,7 +82,7 @@ async def show_actual_orders_msg(message: Message, phone_number: str):
 
 
 async def show_order_history_query(callback_query: CallbackQuery, phone_number: str):
-    orders = await get_orders_by_number(phone_number, "old")
+    orders = await get_orders_by_phone_number(phone_number, "old")
     if not orders:
         await callback_query.message.answer(
             text="Мы не нашли старых заказов.",
@@ -79,7 +102,7 @@ async def show_order_history_query(callback_query: CallbackQuery, phone_number: 
 
 
 async def show_order_history_msg(message: Message, phone_number: str):
-    orders = await get_orders_by_number(phone_number, "old")
+    orders = await get_orders_by_phone_number(phone_number, "old")
     if not orders:
         await message.answer(
             text="Мы не нашли старых заказов.",
@@ -141,6 +164,11 @@ def get_item_list(items: list) -> str:
 
 async def get_delivery_status_msg(order: dict, status, config) -> str:
     if status in [
+        'website-order',
+        'not-ready'
+    ]:
+        return await get_dispatch_msg_alternative(order, config, status)
+    elif status in [
         "assembling",
         "fail-gotov",
         "assembling-complete",
@@ -151,7 +179,7 @@ async def get_delivery_status_msg(order: dict, status, config) -> str:
         "ready",
     ]:
         return await get_dispatch_msg(config, status)
-    if status in [
+    elif status in [
         "send-to-delivery",
         "delivering",
         "redirect",
@@ -198,6 +226,20 @@ async def get_ruspost_msg(order: dict) -> Optional[str]:
 async def get_dispatch_msg(config: dict, status: str) -> str:
     sending_date_1 = dt.now() + timedelta(days=config.get(status).get("days_count")[0])
     sending_date_2 = dt.now() + timedelta(days=config.get(status).get("days_count")[1])
+    sending_date_1 = sending_date_1.strftime("%d.%m.%Y")
+    sending_date_2 = sending_date_2.strftime("%d.%m.%Y")
+    return f"Ориентировочная дата отправки {sending_date_1} - {sending_date_2}"
+
+
+async def get_dispatch_msg_alternative(order: dict, config: dict, status: str) -> str:
+    real_date_of_payment = order.get('customFields', {}).get('real_date_of_payment')
+    if not real_date_of_payment:
+        log.error("Something is wrong with real_date_of_payment order= %s", order.get('number'))
+        return ''
+    real_date_of_payment = dt.strptime('2024-02-25', '%Y-%m-%d')
+
+    sending_date_1 = real_date_of_payment + timedelta(days=config.get(status).get("days_count")[0])
+    sending_date_2 = real_date_of_payment + timedelta(days=config.get(status).get("days_count")[1])
     sending_date_1 = sending_date_1.strftime("%d.%m.%Y")
     sending_date_2 = sending_date_2.strftime("%d.%m.%Y")
     return f"Ориентировочная дата отправки {sending_date_1} - {sending_date_2}"

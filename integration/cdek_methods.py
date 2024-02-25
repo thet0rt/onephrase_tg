@@ -2,12 +2,10 @@ import os
 from typing import Optional
 
 import aiohttp
-from dotenv import load_dotenv
 
 from db import get_from, set_to
 from log_settings import log
 
-load_dotenv("../.env")  # todo delete later
 
 CDEK_CLIENT_ID = os.getenv("CDEK_CLIENT_ID")
 CDEK_CLIENT_SECRET = os.getenv("CDEK_CLIENT_SECRET")

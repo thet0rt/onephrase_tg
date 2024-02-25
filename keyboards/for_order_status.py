@@ -23,6 +23,11 @@ def get_no_new_orders_kb() -> InlineKeyboardMarkup:
         )
     )
     kb.row(
+        InlineKeyboardButton(
+            text="Найти по номеру заказа", callback_data="input_order_number"
+        )
+    )
+    kb.row(
         InlineKeyboardButton(text="Позвать менеджера", callback_data="ask_for_manager")
     )
     kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
@@ -34,6 +39,11 @@ def get_no_old_orders_kb() -> InlineKeyboardMarkup:
     kb.row(
         InlineKeyboardButton(
             text="Проверить актуальные заказы", callback_data="order_status"
+        )
+    )
+    kb.row(
+        InlineKeyboardButton(
+            text="Найти по номеру заказа", callback_data="input_order_number"
         )
     )
     kb.row(
@@ -99,6 +109,43 @@ def get_after_order_history_kb() -> InlineKeyboardMarkup:
             text="Проверить актуальные заказы", callback_data="order_status"
         )
     )
+    kb.row(
+        InlineKeyboardButton(text="Позвать менеджера", callback_data="ask_for_manager")
+    )
+    kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
+
+    return kb.as_markup()
+
+
+def get_after_order_number_kb() -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
+    kb.row(
+        InlineKeyboardButton(
+            text="Проверить актуальные заказы", callback_data="order_status"
+        )
+    )
+    kb.row(
+        InlineKeyboardButton(
+            text="Ввести номер заказа", callback_data="input_order_number"
+        )
+    )
+    kb.row(
+        InlineKeyboardButton(text="Позвать менеджера", callback_data="ask_for_manager")
+    )
+    kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
+
+    return kb.as_markup()
+
+
+def get_invalid_number_kb() -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
+    kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
+
+    return kb.as_markup()
+
+
+def get_no_order_kb() -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
     kb.row(
         InlineKeyboardButton(text="Позвать менеджера", callback_data="ask_for_manager")
     )
