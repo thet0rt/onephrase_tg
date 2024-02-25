@@ -113,7 +113,7 @@ def get_custom_kb() -> InlineKeyboardMarkup:
         InlineKeyboardButton(
             text="Заказать кастом на сайте",
             url="https://onephrase.ru/?utm_source=tg&utm_medium=tg_bot",  # другая ссылка?
-            callback_data="back_to_questions",
+            callback_data="back_to_common_questions",
         )
     )
     kb.row(
@@ -128,4 +128,27 @@ def get_custom_kb() -> InlineKeyboardMarkup:
 # endregion
 
 
-# todo Colors and production_time
+# region Terms of manufacturing
+
+
+def get_manufacturing_kb() -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
+    kb.row(
+        InlineKeyboardButton(
+            text="Перейти на сайт",
+            url="https://onephrase.ru/?utm_source=tg&utm_medium=tg_bot",  # другая ссылка?
+            callback_data="back_to_common_questions",
+        )
+    )
+    kb.row(
+        InlineKeyboardButton(text="Раздел в наличии (доставка за 1-2 рабочих дня)",
+                             url='https://onephrase.ru/catalog/in-stock/?utm_source=tg&utm_medium=tg_bot',
+                             callback_data="back_to_common_questions")
+    )
+    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_common_questions"))
+    kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
+
+    return kb.as_markup()
+
+
+# endregion

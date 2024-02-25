@@ -114,17 +114,22 @@ GLOBAL_MSG_CONFIG = {
 базовые футболки от 2990
 футболки тру овер от 3490"""
     },
+    "manufacturing_msg_cfg": {
+        "main_msg": """Срок изготовления для новых заказов сейчас 7-10 рабочих дней с момента оплаты.
+
+Доставка занимает в среднем 1-3 рабочих дня и стоит в среднем 300-500 рублей. Чтобы уточнить стоимость доставки напишите, пожалуйста, в каком городе хотели бы получить заказ."""
+    },
 }
 INFO_MSG_CONFIG = GLOBAL_MSG_CONFIG.get("info_msg_cfg")
 BUSINESS_MSG_CONFIG = GLOBAL_MSG_CONFIG.get("business_msg_cfg")
 CUSTOM_MSG_CONFIG = GLOBAL_MSG_CONFIG.get("custom_msg_cfg")
+MANUFACTURING_MSG_CONFIG = GLOBAL_MSG_CONFIG.get("manufacturing_msg_cfg")
 
 
 def get_price_msg(
-    cloth_type: str,
+        cloth_type: str,
 ) -> Optional[dict]:  # todo подумать может ошибку какую выкидывать если пусто
     return INFO_MSG_CONFIG.get(cloth_type)
-
 
 #  todo Изменение переменных реализовать в отдельном приложении на фастапи или джанго. При перезагрузке тг бота,
 # бот должен http запросом подтягивать конфиги, проверять их и на них работать

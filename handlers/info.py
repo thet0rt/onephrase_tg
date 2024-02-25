@@ -2,7 +2,7 @@ from aiogram import Router, F
 from aiogram.types import CallbackQuery
 
 from keyboards.for_info import *
-from logic.configuration import INFO_MSG_CONFIG, BUSINESS_MSG_CONFIG, CUSTOM_MSG_CONFIG
+from logic.configuration import INFO_MSG_CONFIG, BUSINESS_MSG_CONFIG, CUSTOM_MSG_CONFIG, MANUFACTURING_MSG_CONFIG
 
 FAQ_CFG = BUSINESS_MSG_CONFIG.get("Q&A")
 router = Router()  # [1]
@@ -86,6 +86,31 @@ async def custom_info(callback_query: CallbackQuery):
     await callback_query.message.delete()
     msg = CUSTOM_MSG_CONFIG.get("main_msg")
     await callback_query.message.answer(msg, reply_markup=get_custom_kb())
+
+
+# endregion
+
+
+# region Colors
+@router.callback_query(F.data == "colors")
+async def colors_info(callback_query: CallbackQuery):
+    await callback_query.answer()
+    await callback_query.message.delete()
+    # msg = CUSTOM_MSG_CONFIG.get("main_msg")
+    msg = 'todo'
+    await callback_query.message.answer(msg, reply_markup=get_custom_kb())
+
+
+# endregion
+
+
+# region Terms of manufacturing
+@router.callback_query(F.data == "terms_of_manufacturing")
+async def manufacturing_info(callback_query: CallbackQuery):
+    await callback_query.answer()
+    await callback_query.message.delete()
+    msg = MANUFACTURING_MSG_CONFIG.get("main_msg")
+    await callback_query.message.answer(msg, reply_markup=get_manufacturing_kb())
 
 
 # endregion
