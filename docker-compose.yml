@@ -10,10 +10,14 @@ services:
     ports:
       - "6378:6378"
   bot:
-    build: .
+    image: thet0rt/onephrase_tg_bot
     command: sh -c "python -m main"
     env_file:
       - ./.env
     restart: always
     depends_on:
       - redis
+    volumes:
+      - log:/var/log
+volumes:
+  log:
