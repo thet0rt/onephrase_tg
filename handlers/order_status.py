@@ -64,7 +64,7 @@ async def get_sale(callback_query: CallbackQuery, state: FSMContext, bot: Bot):
     else:
         await callback_query.message.answer(
             "Чтобы получать бонусы нужно быть подписанным"
-            " на наш канал @justonephrase",
+            " на наш канал @onephrase",
             reply_markup=get_subscribe_kb(),
         )
 
@@ -76,7 +76,7 @@ async def authorize(message: Message, state: FSMContext):
     await message.answer(
         "Спасибо! Теперь мы сможем найти Ваши заказы",
         reply_markup=ReplyKeyboardRemove(),
-    )
+    )  # todo мб убрать
     state = await state.get_state()
     log.debug(state)
     if state == CurrentLogic.order_status:

@@ -21,3 +21,26 @@ def get_main_kb() -> InlineKeyboardMarkup:
     )
 
     return kb.as_markup()
+
+
+def get_ask_for_manager_kb() -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
+    kb.row(InlineKeyboardButton(text="Ответы на популярные вопросы", callback_data="Q&A"))
+    kb.row(
+        InlineKeyboardButton(
+            text="Перейти на сайт", url='https://onephrase.ru/?utm_source=tg&utm_medium=tg_bot',
+            callback_data="back_to_common_questions"
+        )
+    )
+    kb.row(InlineKeyboardButton(text="Получить скидку", callback_data="sale"))
+    kb.row(
+        InlineKeyboardButton(
+            text="Проверить историю заказов", callback_data="check_order_history"
+        )
+    )
+    kb.row(
+        InlineKeyboardButton(text="На главную", callback_data="back_to_menu")
+    )
+
+    return kb.as_markup()
+
