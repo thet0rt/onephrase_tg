@@ -103,3 +103,25 @@ async def get_order_by_order_number(message: Message):
         )
     await show_order_by_order_number(message, order_number)
 
+
+# todo delete in production
+@router.message(F.text.in_({'logout', 'Logout'}))
+async def login(message: Message):
+    from db import redis_client
+    await redis_client.delete(message.from_user.id)
+    await message.answer(text=f'Logged out successfully',
+                         reply_markup=get_invalid_number_kb())
+
+
+# todo delete in production
+@router.message(F.text)
+async def login(message: Message):
+    phone_number = message.text
+    if not re.fullmatch(r'[0-9]{11}', phone_number):
+        return await message.answer(
+            text="Введи в формате 79087530154",
+            reply_markup=get_invalid_number_kb()
+        )
+    await set_to(str(message.from_user.id), phone_number, 3600)
+    await message.answer(text=f'Authorized successfully as {phone_number}',
+                         reply_markup=get_invalid_number_kb())
