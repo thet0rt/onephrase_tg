@@ -2,9 +2,8 @@ from aiogram import Router, F
 from aiogram.types import CallbackQuery
 
 from keyboards.for_info import *
-from logic.configuration import INFO_MSG_CONFIG, BUSINESS_MSG_CONFIG, CUSTOM_MSG_CONFIG, MANUFACTURING_MSG_CONFIG
+from logic.configuration import (PRICE_MSG_CONFIG, BUSINESS_MSG_CONFIG, FAQ_CFG)
 
-FAQ_CFG = BUSINESS_MSG_CONFIG.get("Q&A")
 router = Router()  # [1]
 
 
@@ -29,12 +28,12 @@ async def info_menu(callback_query: CallbackQuery):
     )
 
 
-@router.callback_query(F.data.in_(set(INFO_MSG_CONFIG.keys())))
+@router.callback_query(F.data.in_(set(PRICE_MSG_CONFIG.keys())))
 async def price_info(callback_query: CallbackQuery):
     await callback_query.answer()
     await callback_query.message.delete()
     item = callback_query.data
-    info_msg = INFO_MSG_CONFIG.get(item, {}).get("msg")
+    info_msg = PRICE_MSG_CONFIG.get(item, {}).get("msg")
     await callback_query.message.answer(info_msg, reply_markup=get_price_shown_kb())
 
 
@@ -46,7 +45,7 @@ async def price_info(callback_query: CallbackQuery):
 async def business_menu(callback_query: CallbackQuery):
     await callback_query.answer()
     await callback_query.message.delete()
-    msg = BUSINESS_MSG_CONFIG.get("main_msg")
+    msg = BUSINESS_MSG_CONFIG.get("main", {}).get('msg')
     await callback_query.message.answer(text=msg, reply_markup=get_for_business_kb())
 
 
@@ -54,7 +53,7 @@ async def business_menu(callback_query: CallbackQuery):
 async def about_collections(callback_query: CallbackQuery):
     await callback_query.answer()
     await callback_query.message.delete()
-    msg = BUSINESS_MSG_CONFIG.get("collections_msg")
+    msg = BUSINESS_MSG_CONFIG.get("collections", {}).get('msg')
     await callback_query.message.answer(text=msg, reply_markup=get_collections_kb())
 
 
@@ -85,7 +84,7 @@ async def faq_menu(callback_query: CallbackQuery):
 async def custom_info(callback_query: CallbackQuery):
     await callback_query.answer()
     await callback_query.message.delete()
-    msg = CUSTOM_MSG_CONFIG.get("main_msg")
+    msg = BUSINESS_MSG_CONFIG.get("custom", {}).get('msg')
     await callback_query.message.answer(msg, reply_markup=get_custom_kb())
 
 
@@ -110,8 +109,7 @@ async def colors_info(callback_query: CallbackQuery):
 async def manufacturing_info(callback_query: CallbackQuery):
     await callback_query.answer()
     await callback_query.message.delete()
-    msg = MANUFACTURING_MSG_CONFIG.get("main_msg")
+    msg = BUSINESS_MSG_CONFIG.get("manufacturing", {}).get('msg')
     await callback_query.message.answer(msg, reply_markup=get_manufacturing_kb())
-
 
 # endregion

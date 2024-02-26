@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 
-load_dotenv(".env")  # todo change to prod when deploy
+load_dotenv(".env")
 
 from os import getenv
 import asyncio

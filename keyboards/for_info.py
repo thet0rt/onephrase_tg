@@ -1,6 +1,6 @@
 from aiogram.types import InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardButton
-from logic.configuration import INFO_MSG_CONFIG, BUSINESS_MSG_CONFIG
+from logic.configuration import PRICE_MSG_CONFIG, BUSINESS_MSG_CONFIG, FAQ_CFG
 
 
 def get_main_info_kb() -> InlineKeyboardMarkup:
@@ -29,7 +29,7 @@ def get_main_info_kb() -> InlineKeyboardMarkup:
 # region Price
 def get_price_kb() -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
-    for item, item_settings in INFO_MSG_CONFIG.items():
+    for item, item_settings in PRICE_MSG_CONFIG.items():
         kb.row(
             InlineKeyboardButton(
                 text=item_settings.get("button_name"), callback_data=item
@@ -81,8 +81,7 @@ def get_collections_kb() -> InlineKeyboardMarkup:
 def get_faq_kb() -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
 
-    faq_cfg = BUSINESS_MSG_CONFIG.get("Q&A")
-    for question, question_settings in faq_cfg.items():
+    for question, question_settings in FAQ_CFG.items():
         kb.row(
             InlineKeyboardButton(
                 text=question_settings.get("button_name"), callback_data=question
@@ -97,8 +96,7 @@ def get_faq_kb() -> InlineKeyboardMarkup:
 def get_faq_kb_from_manager() -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
 
-    faq_cfg = BUSINESS_MSG_CONFIG.get("Q&A")
-    for question, question_settings in faq_cfg.items():
+    for question, question_settings in FAQ_CFG.items():
         kb.row(
             InlineKeyboardButton(
                 text=question_settings.get("button_name"), callback_data=question
