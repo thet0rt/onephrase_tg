@@ -2,7 +2,7 @@ from aiogram import Router, F
 from aiogram.types import CallbackQuery
 
 from keyboards.for_info import *
-from logic.configuration import (PRICE_MSG_CONFIG, BUSINESS_MSG_CONFIG, FAQ_CFG)
+from configuration import (PRICE_MSG_CONFIG, BUSINESS_MSG_CONFIG, FAQ_CFG)
 
 router = Router()  # [1]
 

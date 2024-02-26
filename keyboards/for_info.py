@@ -1,6 +1,6 @@
 from aiogram.types import InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardButton
-from logic.configuration import PRICE_MSG_CONFIG, BUSINESS_MSG_CONFIG, FAQ_CFG
+from configuration import PRICE_MSG_CONFIG, FAQ_CFG
 
 
 def get_main_info_kb() -> InlineKeyboardMarkup:
