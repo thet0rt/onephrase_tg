@@ -194,6 +194,11 @@ async def get_delivery_status_msg(order: dict, status, config) -> str:
         elif delivery_type == 'pochta-rossii-treking-tarifikator':
             delivery_msg = await get_ruspost_msg(order)
             return delivery_msg
+        elif delivery_type == 'self-delivery':
+            return ''
+        else:
+            log.warning("Delivery type not in [sdek-v-2, pochta-rossii-treking-tarifikator, self-delivery] order=%s",
+                        order.get('number'))
 
 
 async def get_cdek_msg(order: dict) -> Optional[str]:
