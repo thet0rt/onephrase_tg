@@ -96,7 +96,7 @@ async def input_order_number(callback_query: CallbackQuery, state: FSMContext):
 @router.message(F.text, CurrentLogic.input_order_number)
 async def get_order_by_order_number(message: Message):
     order_number = message.text
-    if not re.fullmatch(r'[0-9]{5}[ACАС]', order_number):
+    if not re.fullmatch(r'[0-9]{1,5}[ACАС]', order_number):
         return await message.answer(
             text="Неверный номер заказа. Формат номера заказа: 12345C. Попробуйте ввести еще раз:",
             reply_markup=get_invalid_number_kb()
