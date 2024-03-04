@@ -131,8 +131,10 @@ async def process_order_data(order_data: list) -> list[str]:
         status_msg = config.get(status, {}).get("status_msg")
         delivery_status_msg = await get_delivery_status_msg(order, status, config)
         message = (
-            f"{order_number_msg}\n{status_msg}\n{item_msg}\n\n{delivery_status_msg}"
+            f"{order_number_msg}\n{status_msg}\n{item_msg}"
         )
+        if delivery_status_msg:
+            message += f'\n\n{delivery_status_msg}'
         info_list.append(message)
     return info_list
 
@@ -203,13 +205,17 @@ async def get_delivery_status_msg(order: dict, status, config) -> str:
 
 async def get_cdek_msg(order: dict) -> Optional[str]:
     cdek_uuid = order.get("delivery", {}).get("data", {}).get("externalId")
+    track_number = order.get("delivery", {}).get("data", {}).get("trackNumber")
     cdek_status = await get_cdek_status(cdek_uuid)
     delivery_status = cdek_status.get("status")
     planned_date = cdek_status.get("planned_date")
     if not delivery_status or not planned_date:
         log.error('Something is wrong with cdek_status = %s', cdek_status)
         return ""
-    delivery_msg = f"\nСтатус доставки: {delivery_status}\nОриентировочная дата прибытия: {planned_date}"
+    delivery_msg = (f"\nТип доставки: СДЭК"
+                    f"\nТрек-номер для отслеживания: {track_number}"
+                    f"\nСтатус доставки: {delivery_status}"
+                    f"\nОриентировочная дата прибытия: {planned_date}")
     return delivery_msg
 
 
@@ -221,7 +227,9 @@ async def get_ruspost_msg(order: dict) -> Optional[str]:
     if not delivery_status:
         log.error('Something is wrong with ruspost = %s', ruspost_status)
         return ""
-    delivery_msg = f"\nСтатус доставки: {delivery_status}"
+    delivery_msg = (f"\nТип доставки: Почта России"
+                    f"\nТрек-номер для отслеживания: {ruspost_tracking_number}"
+                    f"\nСтатус доставки: {delivery_status}")
     if planned_date:
         delivery_msg += "\nОриентировочная дата прибытия: {planned_date}"
 
@@ -229,6 +237,9 @@ async def get_ruspost_msg(order: dict) -> Optional[str]:
 
 
 async def get_dispatch_msg(config: dict, status: str) -> str:
+    days_count = config.get(status).get("days_count")
+    if days_count == 0:
+        return ''
     sending_date_1 = dt.now() + timedelta(days=config.get(status).get("days_count")[0])
     sending_date_2 = dt.now() + timedelta(days=config.get(status).get("days_count")[1])
     sending_date_1 = sending_date_1.strftime("%d.%m.%Y")

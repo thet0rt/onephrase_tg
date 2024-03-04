@@ -30,7 +30,7 @@ def get_msg_config(sh: Spreadsheet) -> dict:
 def get_delivery_msg_cfg(sh: Spreadsheet) -> dict:
     config = {}
     worksheet = sh.worksheet('delivery_msg_cfg')
-    ws_data = worksheet.batch_get(['A1:E50'])[0]
+    ws_data = worksheet.batch_get(['B1:F50'])[0]
     headers = ws_data[0]
     for data in ws_data[1:]:
         days_count = data[2]
