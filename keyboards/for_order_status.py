@@ -157,3 +157,28 @@ def get_no_order_kb() -> InlineKeyboardMarkup:
     kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
 
     return kb.as_markup()
+
+
+def get_main_order_status_kb() -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
+    kb.row(
+        InlineKeyboardButton(
+            text="Проверить актуальные заказы", callback_data="order_status"
+        )
+    )
+    kb.row(
+        InlineKeyboardButton(
+            text="Проверить по № заказа", callback_data="input_order_number"
+        )
+    )
+    kb.row(
+        InlineKeyboardButton(
+            text="История заказов", callback_data="check_order_history"
+        )
+    )
+    kb.row(
+        InlineKeyboardButton(
+            text="Назад", callback_data="back_to_menu"
+        )
+    )
+    return kb.as_markup()

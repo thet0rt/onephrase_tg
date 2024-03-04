@@ -7,7 +7,7 @@ from db import set_to
 from keyboards.for_order_status import (
     get_authorize_kb,
     get_subscribe_kb,
-    get_subscribe_success_kb, get_invalid_number_kb
+    get_subscribe_success_kb, get_invalid_number_kb, get_main_order_status_kb
 )
 from log_settings import log
 from logic.order_status import (
@@ -20,6 +20,15 @@ from logic.order_status import (
 from utils.states import CurrentLogic
 
 router = Router()  # [1]
+
+
+@router.callback_query(F.data == "order_status_menu")
+async def order_status(callback_query: CallbackQuery):
+    await callback_query.answer()
+    await callback_query.message.answer(
+        text="Проверить статус заказа",
+        reply_markup=get_main_order_status_kb(),
+    )
 
 
 @router.callback_query(F.data == "order_status")
