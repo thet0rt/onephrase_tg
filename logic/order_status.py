@@ -231,7 +231,7 @@ async def get_ruspost_msg(order: dict) -> Optional[str]:
                     f"\nТрек-номер для отслеживания: {ruspost_tracking_number}"
                     f"\nСтатус доставки: {delivery_status}")
     if planned_date:
-        delivery_msg += "\nОриентировочная дата прибытия: {planned_date}"
+        delivery_msg += f"\nОриентировочная дата прибытия: {planned_date}"
 
     return delivery_msg
 
