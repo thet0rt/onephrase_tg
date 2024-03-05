@@ -31,7 +31,6 @@ def get_delivery_msg_cfg(sh: Spreadsheet) -> dict:
     config = {}
     worksheet = sh.worksheet('delivery_msg_cfg')
     ws_data = worksheet.batch_get(['B1:F50'])[0]
-    headers = ws_data[0]
     for data in ws_data[1:]:
         days_count = data[2]
         if '-' in days_count:
@@ -45,9 +44,19 @@ def get_delivery_msg_cfg(sh: Spreadsheet) -> dict:
     return config
 
 
+def get_other_msg_cfg(sh: Spreadsheet) -> dict:
+    config = {}
+    worksheet = sh.worksheet('other_msg_cfg')
+    ws_data = worksheet.batch_get(['A1:B50'])[0]
+    for data in ws_data[1:]:
+        config[data[0]] = data[1]
+    return config
+
+
 sh = get_spreadsheet()
 GLOBAL_MSG_CONFIG = get_msg_config(sh)
 PRICE_MSG_CONFIG = GLOBAL_MSG_CONFIG.get("price_msg_cfg")
 BUSINESS_MSG_CONFIG = GLOBAL_MSG_CONFIG.get("business_msg_cfg")
 FAQ_CFG = GLOBAL_MSG_CONFIG.get('qa_msg_cfg')
 DELIVERY_MSG_CFG = get_delivery_msg_cfg(sh)
+OTHER_MSG_CFG = get_other_msg_cfg(sh)

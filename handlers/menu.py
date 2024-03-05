@@ -4,6 +4,7 @@ from aiogram.types import FSInputFile, CallbackQuery
 from aiogram.types import Message
 
 from keyboards.common import get_main_kb, get_ask_for_manager_kb
+from configuration import OTHER_MSG_CFG
 
 router = Router()  # [1]
 
@@ -13,7 +14,7 @@ async def cmd_start(message: Message):
     logo = FSInputFile("media/logo.png")
     await message.answer_photo(
         photo=logo,
-        caption="Твой текст",  # todo change text
+        caption=OTHER_MSG_CFG.get('main'),
         reply_markup=get_main_kb(),
     )
 
@@ -23,7 +24,9 @@ async def main_menu(callback_query: CallbackQuery):
     logo = FSInputFile("media/logo.png")
     await callback_query.answer(" ")
     await callback_query.message.answer_photo(
-        photo=logo, caption="Твой текст", reply_markup=get_main_kb()
+        photo=logo,
+        caption=OTHER_MSG_CFG.get('main'),
+        reply_markup=get_main_kb()
     )
 
 

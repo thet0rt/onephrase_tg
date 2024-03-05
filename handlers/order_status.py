@@ -18,6 +18,7 @@ from logic.order_status import (
     show_order_history_msg, show_order_by_order_number,
 )
 from utils.states import CurrentLogic
+from configuration import OTHER_MSG_CFG
 
 router = Router()  # [1]
 
@@ -67,7 +68,7 @@ async def get_sale(callback_query: CallbackQuery, state: FSMContext, bot: Bot):
     )
     if subscription_status.status != "left":
         await callback_query.message.answer(
-            "Спасибо за подписку! Промокод на скидку 12% - TGSUB",
+            text=OTHER_MSG_CFG.get('sale'),
             reply_markup=get_subscribe_success_kb(),
         )
     else:
