@@ -14,10 +14,10 @@ async def get_from(key: str) -> str | None:
     return val
 
 
-async def set_to(key: str, val: str, ex: Optional[int]) -> bool:
+async def set_to(key: str, val: str, ex: Optional[timedelta]) -> bool:
     res = await redis_client.set(
         name=key,
-        ex=timedelta(seconds=ex),
+        ex=ex,
         value=val,
     )
     return res

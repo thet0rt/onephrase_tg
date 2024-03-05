@@ -1,8 +1,11 @@
+import re
+from datetime import timedelta
+
 from aiogram import Router, F, Bot
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove, CallbackQuery
-import re
 
+from configuration import OTHER_MSG_CFG
 from db import set_to
 from keyboards.for_order_status import (
     get_authorize_kb,
@@ -18,7 +21,6 @@ from logic.order_status import (
     show_order_history_msg, show_order_by_order_number,
 )
 from utils.states import CurrentLogic
-from configuration import OTHER_MSG_CFG
 
 router = Router()  # [1]
 
@@ -82,7 +84,7 @@ async def get_sale(callback_query: CallbackQuery, state: FSMContext, bot: Bot):
 @router.message(F.content_type.in_({"contact"}))
 async def authorize(message: Message, state: FSMContext):
     phone_number = message.contact.phone_number
-    await set_to(str(message.from_user.id), str(phone_number), ex=3600)
+    await set_to(str(message.from_user.id), str(phone_number), ex=timedelta(days=30))
     await message.answer(
         "Спасибо! Теперь мы сможем найти Ваши заказы",
         reply_markup=ReplyKeyboardRemove(),
@@ -132,6 +134,6 @@ async def login(message: Message):
             text="Введи в формате 79087530154",
             reply_markup=get_invalid_number_kb()
         )
-    await set_to(str(message.from_user.id), phone_number, 3600)
+    await set_to(str(message.from_user.id), phone_number, timedelta(days=30))
     await message.answer(text=f'Authorized successfully as {phone_number}',
                          reply_markup=get_invalid_number_kb())

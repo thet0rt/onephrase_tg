@@ -1,11 +1,11 @@
 import os
+from datetime import timedelta
 from typing import Optional
 
 import aiohttp
 
 from db import get_from, set_to
 from log_settings import log
-
 
 CDEK_CLIENT_ID = os.getenv("CDEK_CLIENT_ID")
 CDEK_CLIENT_SECRET = os.getenv("CDEK_CLIENT_SECRET")
@@ -28,7 +28,7 @@ async def get_cdek_token():
             ) as response:
                 response = await response.json()
                 access_token = response.get("access_token")
-                await set_to("cdek_token", access_token, 3500)
+                await set_to("cdek_token", access_token, timedelta(seconds=3500))
                 return access_token
         except Exception as e:
             log.error('Error while getting cdek_token exc = %s', e)
