@@ -150,9 +150,40 @@ async def process_completed_order(order_data: list) -> list[str]:
         order_number_msg = f"{emoji} Заказ №{number}"
         item_msg = get_item_list(items)
         status_msg = config.get(status, {}).get("status_msg")
-        message = f"{order_number_msg}\n{status_msg}\n{item_msg}"
+        completion_time = get_completion_time(order)
+        message = f"{order_number_msg}\n{status_msg}\n{item_msg}{completion_time}"
         info_list.append(message)
     return info_list
+
+
+def get_noun(number, one='день', two='дня', five='дней'):
+    n = abs(number)
+    n %= 100
+    if 5 <= n <= 20:
+        return five
+    n %= 10
+    if n == 1:
+        return one
+    if 2 <= n <= 4:
+        return two
+    return five
+
+
+def get_completion_time(order: dict) -> str:
+    payment_date = order.get('customFields', {}).get('real_date_of_payment')
+    shipment_date = order.get('shipmentDate')
+    try:
+        payment_date = dt.strptime(payment_date, '%Y-%m-%d')
+        shipment_date = dt.strptime(shipment_date, '%Y-%m-%d')
+        completion_days_delta = shipment_date - payment_date
+        completion_days = completion_days_delta.days
+        day_noun = get_noun(completion_days)
+        completion_time = f'\n\nЗаказ выполнен и передан в службу доставки за {completion_days} {day_noun}'
+        return completion_time
+    except TypeError as exc:
+        log.error('Error while getting completion_time exc=%s', exc)
+        return ''
+
 
 
 def get_item_list(items: list) -> str:
@@ -252,7 +283,7 @@ async def get_dispatch_msg_alternative(order: dict, config: dict, status: str) -
     if not real_date_of_payment:
         log.error("Something is wrong with real_date_of_payment order= %s", order.get('number'))
         return ''
-    real_date_of_payment = dt.strptime('2024-02-25', '%Y-%m-%d')
+    real_date_of_payment = dt.strptime(real_date_of_payment, '%Y-%m-%d')
 
     sending_date_1 = real_date_of_payment + timedelta(days=config.get(status).get("days_count")[0])
     sending_date_2 = real_date_of_payment + timedelta(days=config.get(status).get("days_count")[1])
