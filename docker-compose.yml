@@ -9,6 +9,8 @@ services:
     restart: on-failure
     ports:
       - "6378:6378"
+    volumes:
+      - redis_data:/data
   bot:
     image: thet0rt/onephrase_tg_bot
     command: sh -c "python -m main"
@@ -18,6 +20,6 @@ services:
     depends_on:
       - redis
     volumes:
-      - log:/var/log
+      - ./log:/app/log
 volumes:
-  log:
+  redis_data:
