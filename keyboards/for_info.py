@@ -1,6 +1,6 @@
 from aiogram.types import InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardButton
-from configuration import PRICE_MSG_CONFIG, FAQ_CFG
+from configuration import PRICE_MSG_CONFIG, FAQ_CFG, COLORS_MSG_CONFIG
 
 
 def get_main_info_kb() -> InlineKeyboardMarkup:
@@ -134,6 +134,32 @@ def get_custom_kb() -> InlineKeyboardMarkup:
         InlineKeyboardButton(text="Позвать менеджера", callback_data="ask_for_manager")
     )
     kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_common_questions"))
+    kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
+
+    return kb.as_markup()
+
+
+# endregion
+
+
+# region Colors
+def get_colors_kb() -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
+    for item, item_settings in COLORS_MSG_CONFIG.items():
+        kb.row(
+            InlineKeyboardButton(
+                text=item_settings.get("button_name"), callback_data=item
+            )
+        )
+    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_common_questions"))
+    kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
+
+    return kb.as_markup()
+
+
+def get_colors_shown_kb() -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
+    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_colors"))
     kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
 
     return kb.as_markup()

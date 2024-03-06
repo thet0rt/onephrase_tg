@@ -16,7 +16,7 @@ def get_spreadsheet() -> Spreadsheet:
 
 def get_msg_config(sh: Spreadsheet) -> dict:
     msg_config = {}
-    for config_name in ['price_msg_cfg', 'business_msg_cfg', 'qa_msg_cfg']:
+    for config_name in ['price_msg_cfg', 'colors_msg_cfg', 'business_msg_cfg', 'qa_msg_cfg']:
         worksheet = sh.worksheet(config_name)
         ws_data = worksheet.batch_get(['A1:C50'])[0]
         config = {}
@@ -57,6 +57,7 @@ sh = get_spreadsheet()
 GLOBAL_MSG_CONFIG = get_msg_config(sh)
 PRICE_MSG_CONFIG = GLOBAL_MSG_CONFIG.get("price_msg_cfg")
 BUSINESS_MSG_CONFIG = GLOBAL_MSG_CONFIG.get("business_msg_cfg")
+COLORS_MSG_CONFIG = GLOBAL_MSG_CONFIG.get("colors_msg_cfg")
 FAQ_CFG = GLOBAL_MSG_CONFIG.get('qa_msg_cfg')
 DELIVERY_MSG_CFG = get_delivery_msg_cfg(sh)
 OTHER_MSG_CFG = get_other_msg_cfg(sh)

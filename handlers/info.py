@@ -2,7 +2,7 @@ from aiogram import Router, F
 from aiogram.types import CallbackQuery
 
 from keyboards.for_info import *
-from configuration import (PRICE_MSG_CONFIG, BUSINESS_MSG_CONFIG, FAQ_CFG)
+from configuration import (PRICE_MSG_CONFIG, BUSINESS_MSG_CONFIG, FAQ_CFG, COLORS_MSG_CONFIG)
 
 router = Router()  # [1]
 
@@ -21,7 +21,7 @@ async def info_menu(callback_query: CallbackQuery):
 
 # region Price
 @router.callback_query(F.data.in_({"price", "back_to_price"}))
-async def info_menu(callback_query: CallbackQuery):
+async def price_menu(callback_query: CallbackQuery):
     await callback_query.answer("")
     # await callback_query.message.delete()
     await callback_query.message.answer(
@@ -93,13 +93,23 @@ async def custom_info(callback_query: CallbackQuery):
 
 
 # region Colors
-@router.callback_query(F.data == "colors")
+
+@router.callback_query(F.data.in_({"colors", "back_to_colors"}))
+async def colors_menu(callback_query: CallbackQuery):
+    await callback_query.answer("")
+    # await callback_query.message.delete()
+    await callback_query.message.answer(
+        "Что вас интересует?", reply_markup=get_colors_kb()
+    )
+
+
+@router.callback_query(F.data.in_(set(COLORS_MSG_CONFIG.keys())))
 async def colors_info(callback_query: CallbackQuery):
     await callback_query.answer()
     # await callback_query.message.delete()
-    # msg = CUSTOM_MSG_CONFIG.get("main_msg")
-    msg = 'todo'
-    await callback_query.message.answer(msg, reply_markup=get_custom_kb())
+    item = callback_query.data
+    info_msg = COLORS_MSG_CONFIG.get(item, {}).get("msg")
+    await callback_query.message.answer(info_msg, reply_markup=get_colors_shown_kb())
 
 
 # endregion
