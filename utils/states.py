@@ -6,3 +6,4 @@ class CurrentLogic(StatesGroup):
     order_history = State()
     input_order_number = State()
     basic = State()
+    load_photo = State()
