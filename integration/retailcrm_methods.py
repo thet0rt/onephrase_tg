@@ -25,7 +25,7 @@ async def get_orders_by_phone_number(
                     return
                 return response.get("orders")
         except Exception as e:
-            log.error('Error while getting order_info from CRM, exc = %e', e)
+            log.error('Error while getting order_info from CRM, exc = %s', e)
             return
 
 
@@ -45,5 +45,5 @@ async def get_orders_by_order_number(order_number: str) -> Optional[list]:  # to
                     return
                 return response.get("orders")
         except Exception as e:
-            log.error('Error while getting order_info from CRM, exc = %e', e)
+            log.error('Error while getting order_info from CRM, exc = %s', e)
             return
