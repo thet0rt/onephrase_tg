@@ -1,16 +1,23 @@
+import os
+
 from aiogram import Router, F
 from aiogram.filters import Command
+from aiogram.fsm.context import FSMContext
 from aiogram.types import FSInputFile, CallbackQuery
 from aiogram.types import Message
 
-from keyboards.common import get_main_kb, get_ask_for_manager_kb
 from configuration import OTHER_MSG_CFG
+from integration.helpers import upload_photo_to_server
+from keyboards.common import get_main_kb, get_ask_for_manager_kb
+from utils.states import CurrentLogic
 
 router = Router()  # [1]
 
 
 @router.message(Command("start"))  # [2]
-async def cmd_start(message: Message):
+async def cmd_start(message: Message, state: FSMContext):
+    if await state.get_state() == CurrentLogic.load_photo:
+        await state.set_state(CurrentLogic.basic)
     logo = FSInputFile("media/logo.png")
     await message.answer_photo(
         photo=logo,
@@ -39,3 +46,25 @@ async def ask_for_manager(callback_query: CallbackQuery):
                   ' Для более оперативного ответа опишите, пожалуйста, в следующем сообщении свой запрос так подробно,'
                   ' как вы считаете нужным.')
     await callback_query.message.answer(text=msg_answer, reply_markup=get_ask_for_manager_kb())
+
+
+@router.message(F.text == os.getenv("ADMIN_LOGIN_PHRASE"))
+async def admin_login(message: Message, state: FSMContext):
+    await state.set_state(CurrentLogic.load_photo)
+    await message.answer('Logged in successfully. Loading photos available.')
+
+
+@router.message(F.document, CurrentLogic.load_photo)
+async def handle_photo(message: Message):
+    file_id = message.document.file_id
+    file_name = message.document.file_name
+    file = await message.document.bot.get_file(file_id)
+    file_path = file.file_path
+
+    file_io = await message.document.bot.download_file(file_path)
+    route = await upload_photo_to_server(file_io, file_name)
+    if route:
+        message_text = f'{os.getenv("DOWNLOAD_PHOTO_URL")}{route}'
+    else:
+        message_text = 'Не удалось создать ссылку на файл'
+    await message.answer(message_text)
