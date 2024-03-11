@@ -3,6 +3,8 @@ from aiogram.types import CallbackQuery
 
 from keyboards.for_info import *
 from configuration import (PRICE_MSG_CONFIG, BUSINESS_MSG_CONFIG, FAQ_CFG, COLORS_MSG_CONFIG)
+from log_settings import log
+from aiogram.types import FSInputFile
 
 router = Router()  # [1]
 
@@ -35,7 +37,11 @@ async def price_info(callback_query: CallbackQuery):
     # await callback_query.message.delete()
     item = callback_query.data
     info_msg = PRICE_MSG_CONFIG.get(item, {}).get("msg")
-    await callback_query.message.answer(info_msg, reply_markup=get_price_shown_kb())
+    photo_path = PRICE_MSG_CONFIG.get(item, {}).get("photo_path")
+    log.debug(photo_path)
+    await callback_query.message.answer_photo(photo=FSInputFile(photo_path),
+                                              caption=info_msg,
+                                              reply_markup=get_price_shown_kb())
 
 
 # endregion
@@ -64,7 +70,10 @@ async def show_answer(callback_query: CallbackQuery):
     # await callback_query.message.delete()
     item = callback_query.data
     msg = FAQ_CFG.get(item, {}).get("msg")
-    await callback_query.message.answer(text=msg, reply_markup=get_answered_kb())
+    photo_path = FAQ_CFG.get(item, {}).get("photo_path")
+    await callback_query.message.answer_photo(photo=FSInputFile(photo_path),
+                                              caption=msg,
+                                              reply_markup=get_answered_kb())
 
 
 @router.callback_query(F.data.in_({"back_to_questions", "Q&A", "Q&A_from_manager"}))
@@ -109,7 +118,10 @@ async def colors_info(callback_query: CallbackQuery):
     # await callback_query.message.delete()
     item = callback_query.data
     info_msg = COLORS_MSG_CONFIG.get(item, {}).get("msg")
-    await callback_query.message.answer(info_msg, reply_markup=get_colors_shown_kb())
+    photo_path = COLORS_MSG_CONFIG.get(item, {}).get("photo_path")
+    await callback_query.message.answer_photo(photo=FSInputFile(photo_path),
+                                              caption=info_msg,
+                                              reply_markup=get_colors_shown_kb())
 
 
 # endregion
