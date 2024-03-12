@@ -1,7 +1,9 @@
 import asyncio
 import os
 import pathlib
+import time
 from collections import namedtuple
+from functools import wraps
 from json import load
 
 import aiohttp
@@ -13,6 +15,20 @@ from log_settings import log
 PhotoData = namedtuple('PhotoData', ['path', 'link'])
 
 
+def timeit(func):
+    @wraps(func)
+    def timeit_wrapper(*args, **kwargs):
+        start_time = time.perf_counter()
+        result = func(*args, **kwargs)
+        end_time = time.perf_counter()
+        total_time = end_time - start_time
+        log.debug(f'Function {func.__name__}{args} {kwargs} Took {total_time:.4f} seconds')
+        return result
+
+    return timeit_wrapper
+
+
+@timeit
 def get_spreadsheet() -> Spreadsheet:
     with open('google_creds.json', 'r') as creds_file:
         google_creds = load(creds_file)
@@ -22,6 +38,7 @@ def get_spreadsheet() -> Spreadsheet:
     return sh
 
 
+@timeit
 def get_msg_config(sh: Spreadsheet) -> dict:
     msg_config = {}
     for config_name in ['price_msg_cfg', 'colors_msg_cfg', 'qa_msg_cfg']:
@@ -39,6 +56,7 @@ def get_msg_config(sh: Spreadsheet) -> dict:
     return msg_config
 
 
+@timeit
 def get_business_config(sh: Spreadsheet) -> dict:
     worksheet = sh.worksheet('business_msg_cfg')
     ws_data = worksheet.batch_get(['A1:C50'])[0]
@@ -49,6 +67,7 @@ def get_business_config(sh: Spreadsheet) -> dict:
     return {worksheet.title: config}
 
 
+@timeit
 def get_delivery_msg_cfg(sh: Spreadsheet) -> dict:
     config = {}
     worksheet = sh.worksheet('delivery_msg_cfg')
@@ -109,6 +128,7 @@ def get_missing_media(photo_data_list) -> list[PhotoData]:
     return missing_media
 
 
+@timeit
 def check_media() -> None:
     photo_data_list = get_media_paths()
     missing_media = get_missing_media(photo_data_list)
@@ -118,6 +138,7 @@ def check_media() -> None:
     asyncio.run(download_media(missing_media))
 
 
+log.info('Started importing configuration')  # todo change to func. or not
 sh = get_spreadsheet()
 GLOBAL_MSG_CONFIG = get_msg_config(sh)
 PRICE_MSG_CONFIG = GLOBAL_MSG_CONFIG.get("price_msg_cfg")
@@ -127,3 +148,4 @@ FAQ_CFG = GLOBAL_MSG_CONFIG.get('qa_msg_cfg')
 DELIVERY_MSG_CFG = get_delivery_msg_cfg(sh)
 OTHER_MSG_CFG = get_other_msg_cfg(sh)
 check_media()
+log.info('Configuration imported successfully')
