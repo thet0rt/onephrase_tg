@@ -12,8 +12,7 @@ services:
     volumes:
       - redis_data:/data
   bot:
-#    image: thet0rt/onephrase_tg_bot
-    build: .
+    image: thet0rt/onephrase_tg_bot
     command: sh -c "python -m main"
     env_file:
       - ./.env
