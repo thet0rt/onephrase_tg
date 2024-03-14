@@ -41,11 +41,23 @@ def get_price_kb() -> InlineKeyboardMarkup:
     return kb.as_markup()
 
 
-def get_price_shown_kb() -> InlineKeyboardMarkup:
+def get_price_shown_kb(item: str) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_price"))
+    if item in ('price_t-shirt', 'price_t-shirt-true-over'):
+        kb.row(InlineKeyboardButton(text="Футболки база/тру овер", callback_data='t-shirt_more_info_from_price'))
     kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
 
+    return kb.as_markup()
+
+
+def get_price_tshirt_more_info_shown_kb() -> InlineKeyboardMarkup:
+    # менять сразу в двух местах
+    kb = InlineKeyboardBuilder()
+    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_price"))
+    kb.row(InlineKeyboardButton(text='Подробнее на сайте',
+                                url='https://onephrase.ru/size-chart#!/tab/668768217-3/?utm_source=tg_bot'))
+    kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
     return kb.as_markup()
 
 
@@ -157,11 +169,23 @@ def get_colors_kb() -> InlineKeyboardMarkup:
     return kb.as_markup()
 
 
-def get_colors_shown_kb() -> InlineKeyboardMarkup:
+def get_colors_shown_kb(item) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_colors"))
+    if item in ('colors_t-shirt', 'colors_t-shirt-true-over'):
+        kb.row(InlineKeyboardButton(text="Футболки база/тру овер", callback_data='t-shirt_more_info_from_colors'))
     kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
 
+    return kb.as_markup()
+
+
+def get_colors_tshirt_more_info_shown_kb() -> InlineKeyboardMarkup:
+    # менять сразу в двух местах
+    kb = InlineKeyboardBuilder()
+    kb.row(InlineKeyboardButton(text='Подробнее на сайте',
+                                url='https://onephrase.ru/size-chart#!/tab/668768217-3/?utm_source=tg_bot'))
+    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_colors"))
+    kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
     return kb.as_markup()
 
 

@@ -2,7 +2,7 @@ from aiogram import Router, F
 from aiogram.types import CallbackQuery
 
 from keyboards.for_info import *
-from configuration import (PRICE_MSG_CONFIG, BUSINESS_MSG_CONFIG, FAQ_CFG, COLORS_MSG_CONFIG)
+from configuration import (PRICE_MSG_CONFIG, BUSINESS_MSG_CONFIG, FAQ_CFG, COLORS_MSG_CONFIG, OTHER_MSG_CFG)
 from log_settings import log
 from aiogram.types import FSInputFile
 
@@ -41,7 +41,7 @@ async def price_info(callback_query: CallbackQuery):
     log.debug(photo_path)
     await callback_query.message.answer_photo(photo=FSInputFile(photo_path),
                                               caption=info_msg,
-                                              reply_markup=get_price_shown_kb())
+                                              reply_markup=get_price_shown_kb(item))
 
 
 # endregion
@@ -121,7 +121,26 @@ async def colors_info(callback_query: CallbackQuery):
     photo_path = COLORS_MSG_CONFIG.get(item, {}).get("photo_path")
     await callback_query.message.answer_photo(photo=FSInputFile(photo_path),
                                               caption=info_msg,
-                                              reply_markup=get_colors_shown_kb())
+                                              reply_markup=get_colors_shown_kb(item))
+
+
+# endregion
+
+# region More
+@router.callback_query(F.data.in_({"t-shirt_more_info_from_colors", "t-shirt_more_info_from_price"}))
+async def tshirt_more_info(callback_query: CallbackQuery):
+    await callback_query.answer()
+    msg = OTHER_MSG_CFG.get("t-shirt_more_info", {}).get('msg')
+    photo_path = OTHER_MSG_CFG.get("t-shirt_more_info", {}).get('photo_path')
+    # await callback_query.message.delete()
+    if callback_query.data == 't-shirt_more_info_from_colors':
+        reply_kb = get_colors_tshirt_more_info_shown_kb()
+    else:
+        reply_kb = get_price_tshirt_more_info_shown_kb()
+    await callback_query.message.answer_photo(photo=FSInputFile(photo_path),
+                                              caption=msg,
+                                              reply_markup=reply_kb
+                                              )
 
 
 # endregion
