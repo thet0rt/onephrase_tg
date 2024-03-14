@@ -18,21 +18,23 @@ router = Router()  # [1]
 async def cmd_start(message: Message, state: FSMContext):
     if await state.get_state() == CurrentLogic.load_photo:
         await state.set_state(CurrentLogic.basic)
-    logo = FSInputFile("media/logo.png")
+    msg = OTHER_MSG_CFG.get('main', {}).get('msg')
+    photo_path = OTHER_MSG_CFG.get('main', {}).get('photo_path')
     await message.answer_photo(
-        photo=logo,
-        caption=OTHER_MSG_CFG.get('main'),
+        photo=FSInputFile(photo_path),
+        caption=msg,
         reply_markup=get_main_kb(),
     )
 
 
 @router.callback_query(F.data == "back_to_menu")
 async def main_menu(callback_query: CallbackQuery):
-    logo = FSInputFile("media/logo.png")
-    await callback_query.answer(" ")
+    await callback_query.answer()
+    msg = OTHER_MSG_CFG.get('main', {}).get('msg')
+    photo_path = OTHER_MSG_CFG.get('main', {}).get('photo_path')
     await callback_query.message.answer_photo(
-        photo=logo,
-        caption=OTHER_MSG_CFG.get('main'),
+        photo=FSInputFile(photo_path),
+        caption=msg,
         reply_markup=get_main_kb()
     )
 
