@@ -64,7 +64,7 @@ def get_business_config(sh: Spreadsheet) -> dict:
     for data in ws_data[1:]:
         config[data[0]] = {'button_name': data[1],
                            'msg': data[2]}
-    return {worksheet.title: config}
+    return config
 
 
 @timeit
