@@ -92,7 +92,7 @@ def get_other_msg_cfg(sh: Spreadsheet) -> dict:
     for data in ws_data[1:]:
         button_name = data[0]
         config[button_name] = {'msg': data[1],
-                               'photo_link': data[2],
+                               'photo_link': data[2] if len(data) >= 3 else None,
                                'photo_path': f'media/other_msg_cfg/{button_name}.jpg'
                                }
     pathlib.Path(f'media/other_msg_cfg').mkdir(exist_ok=True, parents=True)  # пришлось пока вставить это сюда
