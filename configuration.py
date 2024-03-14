@@ -51,7 +51,7 @@ def get_msg_config(sh: Spreadsheet) -> dict:
                                 'msg': data[2],
                                 'photo_link': data[3],
                                 'photo_path': f'media/{config_name}/{position}.jpg'}
-            pathlib.Path(f'media/{config_name}').mkdir(exist_ok=True)  # пришлось пока вставить это сюда
+            pathlib.Path(f'media/{config_name}').mkdir(exist_ok=True, parents=True)  # пришлось пока вставить это сюда
         msg_config.update({worksheet.title: config})
     return msg_config
 
@@ -88,9 +88,14 @@ def get_delivery_msg_cfg(sh: Spreadsheet) -> dict:
 def get_other_msg_cfg(sh: Spreadsheet) -> dict:
     config = {}
     worksheet = sh.worksheet('other_msg_cfg')
-    ws_data = worksheet.batch_get(['A1:B50'])[0]
+    ws_data = worksheet.batch_get(['A1:C50'])[0]
     for data in ws_data[1:]:
-        config[data[0]] = data[1]
+        button_name = data[0]
+        config[button_name] = {'msg': data[1],
+                               'photo_link': data[2],
+                               'photo_path': f'media/other_msg_cfg/{button_name}.jpg'
+                               }
+    pathlib.Path(f'media/other_msg_cfg').mkdir(exist_ok=True, parents=True)  # пришлось пока вставить это сюда
     return config
 
 
@@ -112,8 +117,10 @@ async def request_download_media(session: aiohttp.ClientSession, url: str):
 
 def get_media_paths() -> list[PhotoData]:
     media_paths = []
-    for config in [PRICE_MSG_CONFIG, COLORS_MSG_CONFIG, FAQ_CFG]:
+    for config in [PRICE_MSG_CONFIG, COLORS_MSG_CONFIG, FAQ_CFG, OTHER_MSG_CFG]:
         for _, position_data in config.items():
+            if not position_data.get('photo_link'):
+                continue
             media_paths.append(PhotoData(position_data.get('photo_path'), position_data.get('photo_link')))
     return media_paths
 
