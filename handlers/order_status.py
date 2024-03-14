@@ -70,7 +70,7 @@ async def get_sale(callback_query: CallbackQuery, state: FSMContext, bot: Bot):
     )
     if subscription_status.status != "left":
         await callback_query.message.answer(
-            text=OTHER_MSG_CFG.get('sale'),
+            text=OTHER_MSG_CFG.get('sale', {}).get('msg'),
             reply_markup=get_subscribe_success_kb(),
         )
     else:
