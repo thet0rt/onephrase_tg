@@ -18,9 +18,10 @@ class LoggingMiddleware(BaseMiddleware):
         state: FSMContext = data.get('state')
         log.info('Received message from user = %s', user_id)
         if isinstance(event, CallbackQuery):
-            await event.message.delete()
             update: Update = data.get('event_update')
             callback_data = update.callback_query.data
+            # if callback_data not in ['back_to_price', 'back_to_menu']:
+            #     await event.message.delete()
             if callback_data != 'input_order_number' and await state.get_state() == CurrentLogic.input_order_number:
                 await state.set_state(CurrentLogic.basic)
 
