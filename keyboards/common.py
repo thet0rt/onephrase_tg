@@ -24,7 +24,7 @@ def get_ask_for_manager_kb() -> InlineKeyboardMarkup:
     kb.row(
         InlineKeyboardButton(
             text="Перейти на сайт", url='https://onephrase.ru/?utm_source=tg&utm_medium=tg_bot',
-            callback_data="back_to_common_questions"
+            callback_data="back_to_info_menu"
         )
     )
     kb.row(

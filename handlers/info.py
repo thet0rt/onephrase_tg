@@ -5,14 +5,18 @@ from keyboards.for_info import *
 from configuration import (PRICE_MSG_CONFIG, BUSINESS_MSG_CONFIG, FAQ_CFG, COLORS_MSG_CONFIG, OTHER_MSG_CFG)
 from log_settings import log
 from aiogram.types import FSInputFile
+from aiogram.fsm.context import FSMContext
+from utils.states import CurrentLogic
+
 
 router = Router()  # [1]
 
 
-@router.callback_query(F.data.in_({"info", "back_to_common_questions"}))
-async def info_menu(callback_query: CallbackQuery):
+@router.callback_query(F.data.in_({"info", "back_to_info_menu"}))
+async def info_menu(callback_query: CallbackQuery, state: FSMContext):
     await callback_query.answer()
-    if callback_query.data == "back_to_common_questions":
+    await state.set_state(CurrentLogic.b2c_logic)
+    if callback_query.data == "back_to_info_menu":
         # await callback_query.message.delete()
         pass
     await callback_query.message.answer(
@@ -49,8 +53,9 @@ async def price_info(callback_query: CallbackQuery):
 
 # region Business
 @router.callback_query(F.data.in_({"for_business", "back_to_business"}))
-async def business_menu(callback_query: CallbackQuery):
+async def business_menu(callback_query: CallbackQuery, state: FSMContext):
     await callback_query.answer()
+    await state.set_state(CurrentLogic.b2b_logic)
     # await callback_query.message.delete()
     msg = BUSINESS_MSG_CONFIG.get("main", {}).get('msg')
     await callback_query.message.answer(text=msg, reply_markup=get_for_business_kb())
@@ -73,7 +78,7 @@ async def show_answer(callback_query: CallbackQuery):
     photo_path = FAQ_CFG.get(item, {}).get("photo_path")
     await callback_query.message.answer_photo(photo=FSInputFile(photo_path),
                                               caption=msg,
-                                              reply_markup=get_answered_kb())
+                                              reply_markup=get_answered_kb(item))
 
 
 @router.callback_query(F.data.in_({"back_to_questions", "Q&A", "Q&A_from_manager"}))
@@ -103,12 +108,17 @@ async def custom_info(callback_query: CallbackQuery):
 
 # region Colors
 
-@router.callback_query(F.data.in_({"colors", "back_to_colors"}))
-async def colors_menu(callback_query: CallbackQuery):
+@router.callback_query(F.data.in_({"colors", "back_to_colors", "colors_from_b2b"}))
+async def colors_menu(callback_query: CallbackQuery, state: FSMContext):
     await callback_query.answer("")
     # await callback_query.message.delete()
+    current_state = await state.get_state()
+    if current_state == CurrentLogic.b2b_logic:
+        back_cb_data = 'back_to_questions'
+    else:  # current_state == CurrentLogic.b2c_logic
+        back_cb_data = "back_to_info_menu"
     await callback_query.message.answer(
-        "Что вас интересует?", reply_markup=get_colors_kb()
+        "Что вас интересует?", reply_markup=get_colors_kb(back_cb_data)
     )
 
 

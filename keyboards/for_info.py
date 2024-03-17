@@ -1,6 +1,9 @@
+from aiogram.fsm.context import FSMContext
 from aiogram.types import InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardButton
+
 from configuration import PRICE_MSG_CONFIG, FAQ_CFG, COLORS_MSG_CONFIG
+from utils.states import CurrentLogic
 
 
 def get_main_info_kb() -> InlineKeyboardMarkup:
@@ -13,7 +16,6 @@ def get_main_info_kb() -> InlineKeyboardMarkup:
             callback_data="-",
         )
     )
-    kb.row(InlineKeyboardButton(text="Для бизнеса", callback_data="for_business"))
     kb.row(InlineKeyboardButton(text="Кастом", callback_data="custom"))
     kb.row(InlineKeyboardButton(text="Цвета", callback_data="colors"))
     kb.row(
@@ -21,6 +23,7 @@ def get_main_info_kb() -> InlineKeyboardMarkup:
             text="Срок изготовления и доставка", callback_data="terms_of_manufacturing"
         )
     )
+    kb.row(InlineKeyboardButton(text="Корпоративный мерч", callback_data="for_business"))
     kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
 
     return kb.as_markup()
@@ -35,7 +38,7 @@ def get_price_kb() -> InlineKeyboardMarkup:
                 text=item_settings.get("button_name"), callback_data=item
             )
         )
-    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_common_questions"))
+    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_info_menu"))
     kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
 
     return kb.as_markup()
@@ -69,7 +72,7 @@ def get_for_business_kb() -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     kb.row(InlineKeyboardButton(text="Ассортимент", callback_data="collections"))
     kb.row(InlineKeyboardButton(text="Ответы на вопросы", callback_data="Q&A"))
-    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_common_questions"))
+    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_info_menu"))
     kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
 
     return kb.as_markup()
@@ -119,8 +122,10 @@ def get_faq_kb_from_manager() -> InlineKeyboardMarkup:
     return kb.as_markup()
 
 
-def get_answered_kb() -> InlineKeyboardMarkup:
+def get_answered_kb(item: str) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
+    if item == 'b2b_colors':
+        kb.row(InlineKeyboardButton(text="Посмотреть цвета в основном каталоге", callback_data="colors_from_b2b"))
     kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_questions"))
     kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
 
@@ -139,13 +144,13 @@ def get_custom_kb() -> InlineKeyboardMarkup:
         InlineKeyboardButton(
             text="Заказать кастом на сайте",
             url="https://onephrase.ru/?utm_source=tg&utm_medium=tg_bot",  # другая ссылка?
-            callback_data="back_to_common_questions",
+            callback_data="back_to_info_menu",
         )
     )
     kb.row(
         InlineKeyboardButton(text="Позвать менеджера", callback_data="ask_for_manager")
     )
-    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_common_questions"))
+    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_info_menu"))
     kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
 
     return kb.as_markup()
@@ -155,7 +160,7 @@ def get_custom_kb() -> InlineKeyboardMarkup:
 
 
 # region Colors
-def get_colors_kb() -> InlineKeyboardMarkup:
+def get_colors_kb(back_cb_data: str) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     for item, item_settings in COLORS_MSG_CONFIG.items():
         kb.row(
@@ -163,7 +168,8 @@ def get_colors_kb() -> InlineKeyboardMarkup:
                 text=item_settings.get("button_name"), callback_data=item
             )
         )
-    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_common_questions"))
+
+    kb.row(InlineKeyboardButton(text="Назад", callback_data=back_cb_data))
     kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
 
     return kb.as_markup()
@@ -201,18 +207,17 @@ def get_manufacturing_kb() -> InlineKeyboardMarkup:
         InlineKeyboardButton(
             text="Перейти на сайт",
             url="https://onephrase.ru/?utm_source=tg&utm_medium=tg_bot",  # другая ссылка?
-            callback_data="back_to_common_questions",
+            callback_data="back_to_info_menu",
         )
     )
     kb.row(
-        InlineKeyboardButton(text="Раздел в наличии (доставка за 1-2 рабочих дня)",
+        InlineKeyboardButton(text="В наличии (доставка за 1-2 рабочих дня)",
                              url='https://onephrase.ru/catalog/in-stock/?utm_source=tg&utm_medium=tg_bot',
-                             callback_data="back_to_common_questions")
+                             callback_data="back_to_info_menu")
     )
-    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_common_questions"))
+    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_info_menu"))
     kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
 
     return kb.as_markup()
-
 
 # endregion
