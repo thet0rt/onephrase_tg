@@ -101,7 +101,7 @@ async def authorize(message: Message, state: FSMContext):
 async def input_order_number(callback_query: CallbackQuery, state: FSMContext):
     await state.set_state(CurrentLogic.input_order_number)
     await callback_query.message.answer(
-        text="Введите номер заказа:"
+        text="Введите номер заказа в формате 12345C:"
     )
 
 
