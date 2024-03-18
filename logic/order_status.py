@@ -202,10 +202,15 @@ async def get_delivery_status_msg(order: dict, status, config) -> str:
     ]:
         return await get_dispatch_msg_alternative(order, config, status)
     elif status in [
+        'delay-new',
+        "emb",
+    ]:
+        return await get_dispatch_msg_special(order, config, status)
+
+    elif status in [
         "assembling",
         "fail-gotov",
         "assembling-complete",
-        "emb",
         "v-rabote",
         "pack-no-track-number",
         "pack",
@@ -230,7 +235,8 @@ async def get_delivery_status_msg(order: dict, status, config) -> str:
         elif delivery_type == 'self-delivery':
             return ''
         else:
-            log.warning("Delivery type not in [sdek-v-2, pochta-rossii-treking-tarifikator, self-delivery] order=%s",
+            log.warning("Delivery type not in [sdek-v-2, pochta-rossii-treking-tarifikator,"
+                        " self-delivery, self-delivery] order=%s",
                         order.get('number'))
 
 
@@ -290,3 +296,20 @@ async def get_dispatch_msg_alternative(order: dict, config: dict, status: str) -
     sending_date_1 = sending_date_1.strftime("%d.%m.%Y")
     sending_date_2 = sending_date_2.strftime("%d.%m.%Y")
     return f"Ориентировочная дата отправки {sending_date_1} - {sending_date_2}"
+
+
+async def get_dispatch_msg_special(order: dict, config: dict, status: str) -> str:
+    real_date_of_payment = order.get('customFields', {}).get('real_date_of_payment')
+    if not real_date_of_payment:
+        log.error("Something is wrong with real_date_of_payment order= %s", order.get('number'))
+        return ''
+    real_date_of_payment = dt.strptime(real_date_of_payment, '%Y-%m-%d')
+    today = dt.now()
+    days_since = (today - real_date_of_payment).days
+    if days_since <= 5:
+        sending_date_1 = real_date_of_payment + timedelta(days=config.get(status).get("days_count")[0])
+        sending_date_2 = real_date_of_payment + timedelta(days=config.get(status).get("days_count")[1])
+        sending_date_1 = sending_date_1.strftime("%d.%m.%Y")
+        sending_date_2 = sending_date_2.strftime("%d.%m.%Y")
+        return f"Ориентировочная дата отправки {sending_date_1} - {sending_date_2}"
+    return "Ориентировочная дата отправки: на уточнении, позвали менеджера для проверки срока отправки"
