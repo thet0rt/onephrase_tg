@@ -57,9 +57,9 @@ def get_price_shown_kb(item: str) -> InlineKeyboardMarkup:
 def get_price_tshirt_more_info_shown_kb() -> InlineKeyboardMarkup:
     # менять сразу в двух местах
     kb = InlineKeyboardBuilder()
-    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_price"))
     kb.row(InlineKeyboardButton(text='Подробнее на сайте',
                                 url='https://onephrase.ru/size-chart#!/tab/668768217-3/?utm_source=tg_bot'))
+    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_price"))
     kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
     return kb.as_markup()
 
