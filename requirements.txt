@@ -28,6 +28,7 @@ oauthlib==3.2.2
 orderedmultidict==1.0.1
 packaging==23.2
 pathspec==0.12.1
+pillow==10.2.0
 platformdirs==4.2.0
 pook==1.4.0
 pyasn1==0.5.1

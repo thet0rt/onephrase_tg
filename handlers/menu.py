@@ -10,6 +10,7 @@ from configuration import OTHER_MSG_CFG
 from integration.helpers import upload_photo_to_server
 from keyboards.common import get_main_kb, get_ask_for_manager_kb
 from utils.states import CurrentLogic
+from logic.photos import compress_img
 
 router = Router()  # [1]
 
@@ -62,9 +63,14 @@ async def handle_photo(message: Message):
     file_name = message.document.file_name
     file = await message.document.bot.get_file(file_id)
     file_path = file.file_path
-
+    file_ext = file_path.split('.')[-1]
     file_io = await message.document.bot.download_file(file_path)
-    route = await upload_photo_to_server(file_io, file_name)
+    if file_ext.lower() in ['png', 'jpg', 'jpeg', 'jpeg-2000', 'raw', 'tiff', 'bmp', 'heif']:
+        file_io_compressed = compress_img(file_io)
+        file_name = file_ext
+        route = await upload_photo_to_server(file_io_compressed, file_name)
+    else:
+        route = await upload_photo_to_server(file_io, file_name)
     if route:
         message_text = f'{os.getenv("DOWNLOAD_PHOTO_URL")}{route}'
     else:
