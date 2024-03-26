@@ -38,18 +38,18 @@ def get_price_kb() -> InlineKeyboardMarkup:
                 text=item_settings.get("button_name"), callback_data=item
             )
         )
-    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_info_menu"))
-    kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
+    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_info_menu"),
+           InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
 
     return kb.as_markup()
 
 
 def get_price_shown_kb(item: str) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
-    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_price"))
     if item in ('price_t-shirt', 'price_t-shirt-true-over'):
         kb.row(InlineKeyboardButton(text="Футболки база/тру овер", callback_data='t-shirt_more_info_from_price'))
-    kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
+    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_price"),
+           InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
 
     return kb.as_markup()
 
@@ -59,8 +59,8 @@ def get_price_tshirt_more_info_shown_kb() -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     kb.row(InlineKeyboardButton(text='Подробнее на сайте',
                                 url='https://onephrase.ru/size-chart#!/tab/668768217-3/?utm_source=tg_bot'))
-    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_price"))
-    kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
+    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_price"),
+           InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
     return kb.as_markup()
 
 
@@ -72,9 +72,8 @@ def get_for_business_kb() -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     kb.row(InlineKeyboardButton(text="Ассортимент", callback_data="collections"))
     kb.row(InlineKeyboardButton(text="Ответы на вопросы", callback_data="Q&A"))
-    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_info_menu"))
-    kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
-
+    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_info_menu"),
+           InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
     return kb.as_markup()
 
 
@@ -87,9 +86,8 @@ def get_collections_kb() -> InlineKeyboardMarkup:
             callback_data="corporate_manager",
         )
     )
-    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_business"))
-    kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
-
+    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_business"),
+           InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
     return kb.as_markup()
 
 
@@ -102,8 +100,8 @@ def get_faq_kb() -> InlineKeyboardMarkup:
                 text=question_settings.get("button_name"), callback_data=question
             )
         )
-    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_business"))
-    kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
+    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_business"),
+           InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
 
     return kb.as_markup()
 
@@ -126,8 +124,8 @@ def get_answered_kb(item: str) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     if item == 'b2b_colors':
         kb.row(InlineKeyboardButton(text="Посмотреть цвета в основном каталоге", callback_data="colors_from_b2b"))
-    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_questions"))
-    kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
+    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_questions"),
+           InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
 
     return kb.as_markup()
 
@@ -150,8 +148,8 @@ def get_custom_kb() -> InlineKeyboardMarkup:
     kb.row(
         InlineKeyboardButton(text="Позвать менеджера", callback_data="ask_for_manager")
     )
-    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_info_menu"))
-    kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
+    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_info_menu"),
+           InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
 
     return kb.as_markup()
 
@@ -169,18 +167,18 @@ def get_colors_kb(back_cb_data: str) -> InlineKeyboardMarkup:
             )
         )
 
-    kb.row(InlineKeyboardButton(text="Назад", callback_data=back_cb_data))
-    kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
+    kb.row(InlineKeyboardButton(text="Назад", callback_data=back_cb_data),
+           InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
 
     return kb.as_markup()
 
 
 def get_colors_shown_kb(item) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
-    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_colors"))
     if item in ('colors_t-shirt', 'colors_t-shirt-true-over'):
         kb.row(InlineKeyboardButton(text="Футболки база/тру овер", callback_data='t-shirt_more_info_from_colors'))
-    kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
+    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_colors"),
+           InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
 
     return kb.as_markup()
 
@@ -190,8 +188,8 @@ def get_colors_tshirt_more_info_shown_kb() -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     kb.row(InlineKeyboardButton(text='Подробнее на сайте',
                                 url='https://onephrase.ru/size-chart#!/tab/668768217-3/?utm_source=tg_bot'))
-    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_colors"))
-    kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
+    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_colors"),
+           InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
     return kb.as_markup()
 
 
@@ -215,8 +213,8 @@ def get_manufacturing_kb() -> InlineKeyboardMarkup:
                              url='https://onephrase.ru/catalog/in-stock/?utm_source=tg&utm_medium=tg_bot',
                              callback_data="back_to_info_menu")
     )
-    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_info_menu"))
-    kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
+    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_to_info_menu"),
+           InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
 
     return kb.as_markup()
 

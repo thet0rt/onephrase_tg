@@ -43,7 +43,7 @@ def get_msg_config(sh: Spreadsheet) -> dict:
     msg_config = {}
     for config_name in ['price_msg_cfg', 'colors_msg_cfg', 'qa_msg_cfg']:
         worksheet = sh.worksheet(config_name)
-        ws_data = worksheet.batch_get(['A1:D50'])[0]
+        ws_data = worksheet.batch_get(['B2:E50'])[0]
         config = {}
         for data in ws_data[1:]:
             position = data[0]
@@ -59,7 +59,7 @@ def get_msg_config(sh: Spreadsheet) -> dict:
 @timeit
 def get_business_config(sh: Spreadsheet) -> dict:
     worksheet = sh.worksheet('business_msg_cfg')
-    ws_data = worksheet.batch_get(['A1:C50'])[0]
+    ws_data = worksheet.batch_get(['B2:D50'])[0]
     config = {}
     for data in ws_data[1:]:
         config[data[0]] = {'button_name': data[1],
@@ -71,7 +71,7 @@ def get_business_config(sh: Spreadsheet) -> dict:
 def get_delivery_msg_cfg(sh: Spreadsheet) -> dict:
     config = {}
     worksheet = sh.worksheet('delivery_msg_cfg')
-    ws_data = worksheet.batch_get(['B1:F50'])[0]
+    ws_data = worksheet.batch_get(['B2:F50'])[0]
     for data in ws_data[1:]:
         days_count = data[2]
         if '-' in days_count:
@@ -88,7 +88,7 @@ def get_delivery_msg_cfg(sh: Spreadsheet) -> dict:
 def get_other_msg_cfg(sh: Spreadsheet) -> dict:
     config = {}
     worksheet = sh.worksheet('other_msg_cfg')
-    ws_data = worksheet.batch_get(['A1:C50'])[0]
+    ws_data = worksheet.batch_get(['B2:D50'])[0]
     for data in ws_data[1:]:
         button_name = data[0]
         config[button_name] = {'msg': data[1],
