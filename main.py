@@ -17,7 +17,7 @@ async def main():
     bot = Bot(token=token)
     dp = Dispatcher()
     dp.include_routers(
-        menu.router, order_status.router, info.router
+        menu.router, order_status.router,   # info.router todo вернуть позже
     )
     dp.message.middleware(LoggingMiddleware())
     dp.callback_query.middleware(LoggingMiddleware())

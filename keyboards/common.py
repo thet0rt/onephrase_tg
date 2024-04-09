@@ -4,7 +4,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardButton
 
 def get_main_kb() -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
-    kb.row(InlineKeyboardButton(text="Общая информация", callback_data="info"))
+    # kb.row(InlineKeyboardButton(text="Общая информация", callback_data="info"))
     kb.row(
         InlineKeyboardButton(
             text="Проверить статус заказа", callback_data="order_status_menu"
@@ -20,7 +20,8 @@ def get_main_kb() -> InlineKeyboardMarkup:
 
 def get_ask_for_manager_kb() -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
-    kb.row(InlineKeyboardButton(text="Ответы на популярные вопросы", callback_data="Q&A_from_manager"))
+    # kb.row(InlineKeyboardButton(text="Ответы на популярные вопросы", callback_data="Q&A_from_manager"))
+    # todo вернуть позже
     kb.row(
         InlineKeyboardButton(
             text="Перейти на сайт", url='https://onephrase.ru/?utm_source=tg&utm_medium=tg_bot',
