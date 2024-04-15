@@ -44,6 +44,7 @@ retailcrm==5.1.2
 rpds-py==0.17.1
 rsa==4.9
 six==1.16.0
+statsd==4.0.1
 StrEnum==0.4.15
 tomli==2.0.1
 typing_extensions==4.9.0

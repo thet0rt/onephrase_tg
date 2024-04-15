@@ -11,6 +11,7 @@ from integration.helpers import upload_photo_to_server
 from keyboards.common import get_main_kb, get_ask_for_manager_kb
 from utils.states import CurrentLogic
 from logic.photos import compress_img
+from aiogram.types.link_preview_options import LinkPreviewOptions
 
 router = Router()  # [1]
 
@@ -31,11 +32,11 @@ async def cmd_start(message: Message, state: FSMContext):
 @router.callback_query(F.data == "back_to_menu")
 async def main_menu(callback_query: CallbackQuery):
     await callback_query.answer()
-    msg = OTHER_MSG_CFG.get('main', {}).get('msg')
+    # msg = OTHER_MSG_CFG.get('main', {}).get('msg')
     photo_path = OTHER_MSG_CFG.get('main', {}).get('photo_path')
-    await callback_query.message.answer_photo(
-        photo=FSInputFile(photo_path),
-        caption=msg,
+    await callback_query.message.answer(
+        text='{ new } Линейка Sales & Marketing уже на сайте – https://clck.ru/39yuvL \n\nГлавное меню:',
+        link_preview_options=LinkPreviewOptions(is_disabled=True),
         reply_markup=get_main_kb()
     )
 

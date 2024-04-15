@@ -79,9 +79,9 @@ def get_subscribe_success_kb() -> InlineKeyboardMarkup:
             callback_data="-",
         )  # todo посмотреть что тут можно сделать
     )
-    kb.row(
-        InlineKeyboardButton(text="Оформить заказ здесь", callback_data="new_order")
-    )  # todo smth here
+    # kb.row(
+    #     InlineKeyboardButton(text="Оформить заказ здесь", callback_data="new_order")
+    # )  # todo smth here
     kb.row(InlineKeyboardButton(text="На главную", callback_data="back_to_menu"))
 
     return kb.as_markup()
