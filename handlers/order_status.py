@@ -25,11 +25,11 @@ from utils.states import CurrentLogic
 router = Router()  # [1]
 
 
-@router.callback_query(F.data == "order_status_menu")
+@router.callback_query(F.data.in_({"order_status_menu", "back_to_order_status_menu"}))
 async def order_status(callback_query: CallbackQuery):
     await callback_query.answer()
     await callback_query.message.answer(
-        text="Проверить статус заказа",
+        text="Выберите нужный вариант",
         reply_markup=get_main_order_status_kb(),
     )
 
@@ -65,6 +65,8 @@ async def order_history(callback_query: CallbackQuery, state: FSMContext):
 @router.callback_query(F.data == "sale")
 async def get_sale(callback_query: CallbackQuery, state: FSMContext, bot: Bot):
     await callback_query.answer("Проверяем подписку...")
+    log.info(f'user_id={callback_query.from_user.id}')
+    print(callback_query.from_user.id)
     subscription_status = await bot.get_chat_member(
         chat_id=-1001613641192, user_id=callback_query.from_user.id
     )
@@ -75,8 +77,25 @@ async def get_sale(callback_query: CallbackQuery, state: FSMContext, bot: Bot):
         )
     else:
         await callback_query.message.answer(
-            "Чтобы получать бонусы нужно быть подписанным"
-            " на наш канал @onephrase",
+            text=OTHER_MSG_CFG.get('get_sale', {}).get('msg'),
+            reply_markup=get_subscribe_kb(),
+        )
+
+
+@router.callback_query(F.data == "sale_alternative")
+async def get_sale(callback_query: CallbackQuery, state: FSMContext, bot: Bot):
+    await callback_query.answer("Проверяем подписку...")
+    subscription_status = await bot.get_chat_member(
+        chat_id=-1001613641192, user_id=callback_query.from_user.id
+    )
+    if subscription_status.status != "left":
+        await callback_query.message.answer(
+            text=OTHER_MSG_CFG.get('sale_alternative', {}).get('msg'),
+            reply_markup=get_subscribe_success_kb(),
+        )
+    else:
+        await callback_query.message.answer(
+            text=OTHER_MSG_CFG.get('get_sale', {}).get('msg'),
             reply_markup=get_subscribe_kb(),
         )
 

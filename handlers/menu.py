@@ -35,7 +35,7 @@ async def main_menu(callback_query: CallbackQuery):
     # msg = OTHER_MSG_CFG.get('main', {}).get('msg')
     photo_path = OTHER_MSG_CFG.get('main', {}).get('photo_path')
     await callback_query.message.answer(
-        text='{ new } Линейка Sales & Marketing уже на сайте – https://clck.ru/39yuvL \n\nГлавное меню:',
+        text=OTHER_MSG_CFG.get('main_menu', {}).get('msg'),
         link_preview_options=LinkPreviewOptions(is_disabled=True),
         reply_markup=get_main_kb()
     )

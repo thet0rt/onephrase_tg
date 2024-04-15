@@ -28,18 +28,19 @@ def normalize_order_number(order_number: str) -> str:
 async def show_order_by_order_number(message: Message, order_number: str):
     order_number = normalize_order_number(order_number)
     orders = await get_orders_by_order_number(order_number)
-    if not orders:
-        await message.answer(
-            text="🤔 Не нашли такого заказа, если вы считаете, "
-                 "что это ошибка – позовите менеджера, он проверит вручную.",
-            reply_markup=get_no_order_kb(),
-        )
-    else:
-        orders_info = await process_order_data(orders)
-        for order_info in orders_info:
-            await message.answer(
-                text=order_info, reply_markup=get_after_order_number_kb()
-            )
+    if orders:
+        if orders_info := await process_order_data(orders):
+            for order_info in orders_info:
+                await message.answer(
+                    text=order_info, reply_markup=get_after_order_number_kb()
+                )
+            return
+
+    await message.answer(
+        text="🤔 Не нашли такого заказа, если вы считаете, "
+             "что это ошибка – позовите менеджера, он проверит вручную.",
+        reply_markup=get_no_order_kb(),
+    )
 
 
 async def show_actual_orders_query(callback_query: CallbackQuery, phone_number: str):
@@ -119,12 +120,15 @@ async def show_order_history_msg(message: Message, phone_number: str):
 
 
 async def process_order_data(order_data: list) -> list[str]:
+    log.info(order_data)
     info_list = []
     config = get_message_mapping_config()
     for order in order_data:
         number = order.get("number")
         status = order.get("status")
         items = order.get("items")
+        if not items:
+            continue
         emoji = config.get(status, {}).get("emoji", "")
         order_number_msg = f"{emoji} Заказ №{number}"
         item_msg = get_item_list(items)
