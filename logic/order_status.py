@@ -120,7 +120,6 @@ async def show_order_history_msg(message: Message, phone_number: str):
 
 
 async def process_order_data(order_data: list) -> list[str]:
-    log.info(order_data)
     info_list = []
     config = get_message_mapping_config()
     for order in order_data:
@@ -132,8 +131,16 @@ async def process_order_data(order_data: list) -> list[str]:
         emoji = config.get(status, {}).get("emoji", "")
         order_number_msg = f"{emoji} Заказ №{number}"
         item_msg = get_item_list(items)
+        if not item_msg:
+            continue
         status_msg = config.get(status, {}).get("status_msg")
+        if not status_msg:
+            log.warning("No status msg for order %s, %s", number, order)
+            status_msg = ''
         delivery_status_msg = await get_delivery_status_msg(order, status, config)
+        if not order_number_msg:
+            log.error("No order_number_msg for order %s, %s", number, order)
+            continue
         message = (
             f"{order_number_msg}\n{status_msg}\n{item_msg}"
         )
@@ -153,6 +160,8 @@ async def process_completed_order(order_data: list) -> list[str]:
         emoji = config.get(status, {}).get("emoji", "")
         order_number_msg = f"{emoji} Заказ №{number}"
         item_msg = get_item_list(items)
+        if not item_msg:
+            continue
         status_msg = config.get(status, {}).get("status_msg")
         completion_time = get_completion_time(order)
         message = f"{order_number_msg}\n{status_msg}\n{item_msg}{completion_time}"
@@ -189,12 +198,14 @@ def get_completion_time(order: dict) -> str:
         return ''
 
 
-
 def get_item_list(items: list) -> str:
     items_description = "\nСостав заказа:"
     for count, item in enumerate(items, 1):
         name = item.get("offer", {}).get("displayName")
         quantity = item.get("quantity")
+        if not name or not quantity:
+            log.error(f'Error with item description item = {item}')
+            return ''
         items_description += f"\n{count}. {name} - {quantity} шт."
     return items_description
 
