@@ -44,7 +44,7 @@ async def upload_photo_to_server(file_io, file_name):
 async def upload_zip_to_server(file_io, file_name):
     url = os.getenv('UPLOAD_ZIP_URL')
 
-    async with aiohttp.ClientSession() as session:
+    async with aiohttp.ClientSession(trust_env=True) as session:
         try:
             with BytesIO(file_io.getvalue()) as f:
                 photo_bytes = f.read()
