@@ -39,3 +39,18 @@ async def upload_photo_to_server(file_io, file_name):
         except Exception as e:
             log.error('Error while uploading photo to yourcstm.space, exc = %s', e)
             return
+
+
+async def upload_zip_to_server(file_io, file_name):
+    url = os.getenv('UPLOAD_ZIP_URL')
+
+    async with aiohttp.ClientSession() as session:
+        try:
+            with BytesIO(file_io.getvalue()) as f:
+                photo_bytes = f.read()
+            files = {'file': photo_bytes, 'file_name': '' or file_name}
+            async with session.put(url, data=files, raise_for_status=True) as response:
+                return await response.text()
+        except Exception as e:
+            log.error('Error while uploading photo to yourcstm.space, exc = %s', e)
+            return
